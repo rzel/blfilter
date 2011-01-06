@@ -1,0 +1,12 @@
+
+1. blfilter_noopt_double.cpp --> no optimization done and uses double data type
+2. blfilter_noopt_float.cpp  --> replaced all the double (8 byte) of 1 with float (4 byte) (good speedup)
+3. blfilter_lpunroll_2dwindow.cpp --> Loop unrolling has been done and uses float (No significant gain as compared to 2 only about 20% ).
+4. blfilter_lpunroll_linearwindow.cpp --> 2d inner window has been made linear 1d array (Some speedup)
+
+
+
+
+NOTE : manual loop unrolling does not seem to provide very much advantage. Replace double with float in naive and try using the -xSSE3 flag. The time is only 1.8 for lena.png
+
+combination of -parallel and -xSSE3 does not seem to be effective as compared to -parallel and -xSSE3 alone.
