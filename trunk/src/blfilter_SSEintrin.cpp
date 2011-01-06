@@ -8,7 +8,6 @@
 
 using namespace cimg_library;
 CImg<float>  blfilter(CImg<float>, int, float, float);
-float* intrinadd(float* pa, float* pb);
 
 
 int main(int argc, char* args[]) {
@@ -244,18 +243,6 @@ CImg<float>  blfilter(CImg<float> grayImg, int filter_hw, float sigma_sp, float 
 }
 
 
-float* intrinadd(float* pa, float* pb) {
-
-    float pc[4];
-
-    __m128 *t0 = (__m128*)pa;
-    __m128 *t1 = (__m128*)pb;
-    __m128 *t3 = (__m128*)pc;
-    *t3 = _mm_add_ps(*t0, *t1);
-    *t3 = _mm_exp_ps(*t3);
-
-    return pc;
-}
 
 
 
