@@ -1,9 +1,11 @@
 
 #include "CImg.h"
+#include <omp.h>
+#include <sys/time.h>
 
 using namespace cimg_library;
 CImg<float>  blfilter(CImg<float>, int, float, float);
-
+double my_difftime();
 
 int main(int argc, char* args[]) {
 
@@ -50,13 +52,21 @@ int main(int argc, char* args[]) {
     clock_t start, end;
     float elapsed;
 
+    double sttime, endtime;
+ 
     start = clock();
+    sttime = my_difftime();
 //call the filtering function
     CImg<float> filteredImg = blfilter(grayImg, filter_hw, sigma_sp, sigma_ph);
+    endtime = my_difftime();
+
     end = clock();
     elapsed = ((float) (end - start)) / CLOCKS_PER_SEC;
-    printf("Total CPU cycles = %ld\n", (end - start));
-    printf("Time taken for filtering = %f \n", elapsed);
+ 
+ // printf("Total CPU cycles = %ld\n", (end - start));
+ //   printf("Time taken for filtering = %f \n", elapsed);
+
+ // printf("Time take for filtering = %f \n", (endtime - sttime));
 
 //create display windows
 //CImgDisplay main_disp(image, "Lena");
@@ -123,6 +133,16 @@ CImg<float>  blfilter(CImg<float> grayImg, int filter_hw, float sigma_sp, float 
     	//fil_disp.wait();
         }
     **/
+double shared_time = 0;
+#ifdef USE_OMP
+	#pragma omp parallel
+	{
+#endif
+
+   double start = my_difftime();
+
+    int tid, nthreads;
+    int part_idx; 	    
 
     float local_window[2*filter_hw + 1][2*filter_hw + 1];
     float local_pixel = 0; //local window
@@ -132,7 +152,28 @@ CImg<float>  blfilter(CImg<float> grayImg, int filter_hw, float sigma_sp, float 
     float filtered_pixel = 0; //filtered value of pixel
     float normal_factor = 0; //total weight of the filter window used to normalize the filtered coefficient
 
-    for(int i = filter_hw; i < dx + filter_hw ; i++)
+
+	#ifdef USE_OMP
+	nthreads = omp_get_num_threads();
+	//printf("Number of threads = %d\n", nthreads);
+	part_idx = dx / nthreads;
+	
+	 tid = omp_get_thread_num();
+	 //printf("Hello from thread = %d\n", tid);
+	
+	int start_idx = tid*part_idx + filter_hw;
+	int end_idx = (tid + 1)*part_idx + filter_hw;
+
+	if(end_idx > (dx + filter_hw))
+		end_idx = dx + filter_hw;
+	#endif
+		
+	
+	#ifdef USE_OMP	
+	for(int i = start_idx; i < end_idx ; i++)
+	#else
+	for(int i = filter_hw; i < dx + filter_hw ; i++)
+	#endif
         for(int j = filter_hw; j < dy + filter_hw; j++) {
 
             filtered_pixel = 0;
@@ -168,11 +209,34 @@ CImg<float>  blfilter(CImg<float> grayImg, int filter_hw, float sigma_sp, float 
 
         }
 
+double end = my_difftime();
+if( (end - start) > shared_time)
+	shared_time = end - start;
+     
+#ifdef USE_OMP
+if(tid == 0) 
+printf("total time for filtering = %f\n", shared_time);
+
+	}	//pragma omp parallel		
+#else
+printf("total time for filtering = %f\n", shared_time);
+
+#endif		
+
     return filteredImg;
 
 }
 
 
+double my_difftime ()
+{
+    struct timeval tp;
+    struct timezone tzp;
+    int i;
+
+    i = gettimeofday(&tp,&tzp);
+    return ( (double) tp.tv_sec + (double) tp.tv_usec * 1.e-6 );
+};
 
 
 
