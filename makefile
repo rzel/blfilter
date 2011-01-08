@@ -2,15 +2,18 @@
  BUILD_PATH = bin
  VPATH = ../src
  LIB =  -lpthread -openmp -lX11 -lm
- CC = /opt/intel/Compiler/11.1/073/bin/intel64/icpc
+ CC = /home/abi/intel/Compiler/11.1/073/bin/ia32/icpc
 
-all: bNptD bNptF bSSEa bSSEaR bSSEI bSSEIR bLlw bL2w 
+all: bNptD bNptF bNptFOMP bSSEa bSSEaR bSSEI bSSEIR bLlw bL2w 
 
 bNptD: $(SRC_PATH)/CImg.h
 	$(CC)  $(SRC_PATH)/blfilter_noopt_double.cpp -o $(BUILD_PATH)/$@ $(FLAG) $(LIB) 
 
 bNptF: $(SRC_PATH)/CImg.h
 	$(CC)  $(SRC_PATH)/blfilter_noopt_float.cpp -o $(BUILD_PATH)/$@ $(FLAG) $(LIB) 
+
+bNptFOMP: $(SRC_PATH)/CImg.h
+	$(CC)  $(SRC_PATH)/blfilter_noopt_float.cpp -o $(BUILD_PATH)/$@ $(FLAG) -DUSE_OMP $(LIB)
 
 bSSEa: $(SRC_PATH)/CImg.h
 	$(CC)  $(SRC_PATH)/blfilter_SSEassembly.cpp -o $(BUILD_PATH)/$@ $(FLAG) $(LIB) 
