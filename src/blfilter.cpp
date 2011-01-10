@@ -84,7 +84,6 @@ int main(int argc, char* argv[])
             }
         grayImg = image;
     }
-
     start = my_difftime();
 #ifdef USE_TILES
     blfilter_Tiles(Ip_Img, TileSize, rows, cols, filter_hw, sigma_sp, sigma_ph, Op_Img);
@@ -96,7 +95,7 @@ int main(int argc, char* argv[])
     for(i = 0; i < rows; i++)
         for(j  = 0; j < cols; j++)
         {
-            filteredImg(i,j) = Op_Img[INDEX(i,j,cols)];
+            filteredImg(i,j,0,0) = Op_Img[INDEX(i,j,cols)];
         }
 
     CImgDisplay gray_disp(grayImg, "Gray Image");
@@ -178,7 +177,7 @@ void blfilter(float *Ip_Img, int rows, int cols, int filter_hw, float sigma_sp, 
 void blfilter_Tiles(float *Ip_Img, int TileSize, int rows, int cols, int filter_hw, float sigma_sp, float sigma_ph, float *Op_Img)
 {
     float filter_current_pixel = 0; //local window
-    float pd = 0;          //photometric distance
+    float pd = 0, pixel_value=0;          //photometric distance
     float gaussian_ph = 0; //photometric filter coefficient
     float gaussian_bl = 0; //bilateral filter coefficient
     float filtered_pixel = 0; //filtered value of pixel
@@ -224,16 +223,14 @@ void blfilter_Tiles(float *Ip_Img, int TileSize, int rows, int cols, int filter_
             {
                 filtered_pixel = 0;
                 normal_factor  = 0;
-                pd = Ip_Tile[INDEX( i, j, (TileSize + filter_hw +  filter_hw))];
-
+                pixel_value = Ip_Tile[INDEX( i, j, (TileSize + filter_hw +  filter_hw))];
                 for( k = -filter_hw ; k <= filter_hw ; k++)
                 {
                     for( l = -filter_hw ; l <= filter_hw ; l++)
                     {
                         filter_current_pixel = Ip_Tile[INDEX((i + k), (j + l), (TileSize + filter_hw + filter_hw))];
-
                         //photometric distance = difference in pixel values (squared)
-                        pd = pd - filter_current_pixel;
+                        pd = pixel_value - filter_current_pixel;
                         pd = pd * pd;
 
                         gaussian_ph = exp( -(pd) / (2*sigma_ph*sigma_ph) );
@@ -315,27 +312,61 @@ double my_difftime ()
 
 void ReadTile(float *Tile, int Cols, int TileSize, int filter_hw , float *paddedImg, int tileId)
 {
-    int i;
+    int i,j;
     int TilesPerRow, row, col;
+    int ImageIndex = 0;
     int TileCols = TileSize + 2 * filter_hw;
-    TilesPerRow = Cols / TileSize;
+    /* Find Number of tiles - depends on Ip_Img not padded Image */
+    TilesPerRow = Cols/TileSize;
     row = floor(tileId / TilesPerRow);
     col = tileId % TilesPerRow;
+    ImageIndex = (row * TileSize) * (Cols + 2 * filter_hw) + col * TileSize ; 
     for (i = 0; i < TileCols; i++)
-       {
-        memcpy(&(Tile[INDEX(i, 0, TileCols)]), &(paddedImg[INDEX(((row * filter_hw) + i), (col * filter_hw), Cols) ]), TileCols * sizeof(float));
-       }
+    {
+        memcpy(&(Tile[(i* TileCols)]), &(paddedImg[(ImageIndex + (i * (Cols + 2 * filter_hw )) )]), (TileCols * sizeof(float)));
+    }
+    /*
+    CImg<float> tmp(TileCols, TileCols, 1, 1, 0); //create a single image dz = 1, rgb channel  = 1 (only gray); fill it with 0s.
+    for (i = 0; i< TileCols; i++)
+        for (j = 0; j< TileCols; j++)
+        {
+            tmp(i,j,0,0) = Tile[INDEX(i,j,TileCols)];
+            //printf("%f\n", Tile[ImageIndex-1]);
+        }
+
+    CImgDisplay gray_disp(tmp, "I/p Tile");
+    while (!gray_disp.is_closed() ) {
+        gray_disp.wait();
+        //flt_disp.wait();
+    }
+    */
 }
 
 void WriteTile(float *Tile, int Cols, int TileSize, float *Img, int tileId)
 {
-    int i;
+    int i,j;
     int TilesPerRow, row, col;
+    int ImageIndex;
     TilesPerRow = Cols / TileSize;
     row = floor(tileId / TilesPerRow);
     col = tileId % TilesPerRow;
+    ImageIndex = row * TileSize * Cols + col * TileSize;
     for (i = 0; i < TileSize; i++)
-        memcpy(&(Img[INDEX((i + row * TileSize), (col * TileSize),Cols)]), &(Tile[INDEX(i,0, TileSize)]), TileSize * sizeof(float));
+        memcpy(&(Img[(ImageIndex + i * Cols)]), &(Tile[(i*TileSize)]), TileSize * sizeof(float));
+    /*
+    CImg<float> tmp(TileSize, TileSize, 1, 1, 0); //create a single image dz = 1, rgb channel  = 1 (only gray); fill it with 0s.
+    for (i = 0; i< TileSize; i++)
+        for (j = 0; j< TileSize; j++)
+        {
+            tmp(i,j,0,0) = Tile[INDEX(i,j,TileSize)];
+            //printf("%f\n", Tile[ImageIndex-1]);
+        }
+
+    CImgDisplay gray_disp(tmp, "O/p Tile");
+    while (!gray_disp.is_closed() ) {
+        gray_disp.wait();
+    }
+    */
 }
 
 
