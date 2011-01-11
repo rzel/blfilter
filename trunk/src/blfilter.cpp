@@ -1,6 +1,7 @@
 #include "def.h"
 #include <sys/time.h>
 #include "CImg.h"
+#include <omp.h>
 using namespace cimg_library;
 
 /*Function Declarations */
@@ -55,8 +56,8 @@ int main(int argc, char* argv[])
 #ifdef USE_TILES
     if ((cols % TileSize != 0) || (rows % TileSize !=0))
     {
-           printf("Image width = %d or Height = %d is not divisible by TileSize\nexiting..",cols, rows);
-           exit(1);
+        printf("Image width = %d or Height = %d is not divisible by TileSize\nexiting..",cols, rows);
+        exit(1);
     }
 #endif
 
@@ -98,15 +99,15 @@ int main(int argc, char* argv[])
             filteredImg(i,j,0,0) = Op_Img[INDEX(i,j,cols)];
         }
 
-    CImgDisplay gray_disp(grayImg, "Gray Image");
-    CImgDisplay flt_disp(filteredImg, "Filtered Image");
+  /*  CImgDisplay gray_disp(grayImg, "Gray Image");
+      CImgDisplay flt_disp(filteredImg, "Filtered Image");
 
     //create event loop to display the image
-    while (!gray_disp.is_closed() ) {
+      while (!gray_disp.is_closed() ) {
         gray_disp.wait();
         //flt_disp.wait();
     }
-    return 0;
+ */   return 0;
 }
 
 void blfilter(float *Ip_Img, int rows, int cols, int filter_hw, float sigma_sp, float sigma_ph, float *Op_Img)
@@ -142,35 +143,43 @@ void blfilter(float *Ip_Img, int rows, int cols, int filter_hw, float sigma_sp, 
     for( i = 0; i < Rows; i++)
         memcpy(&(paddedImg[INDEX((i+filter_hw),filter_hw,(Cols + filter_hw + filter_hw))]), &(Ip_Img[INDEX(i,0,Cols)]), Cols * sizeof(float));
 
-        for( i = filter_hw; i < Rows + filter_hw ; i++)
+#ifdef USE_OMP
+#pragma omp parallel shared(paddedImg, gaussian_sp, Rows, Cols, filter_hw, sigma_ph)
+    {
+#pragma omp for private( filter_current_pixel,i,j,k,l,normal_factor,gaussian_ph, gaussian_bl, filtered_pixel,pd) 
+#endif
+    for( i = filter_hw; i < Rows + filter_hw ; i++)
+    {
+        for( j = filter_hw; j < Cols + filter_hw; j++)
         {
-            for( j = filter_hw; j < Cols + filter_hw; j++)
+            filtered_pixel = 0;
+            normal_factor  = 0;
+
+            for( k = -filter_hw ; k <= filter_hw ; k++)
             {
-                filtered_pixel = 0;
-                normal_factor  = 0;
-
-                for( k = -filter_hw ; k <= filter_hw ; k++)
+                for( l = -filter_hw ; l <= filter_hw ; l++)
                 {
-                    for( l = -filter_hw ; l <= filter_hw ; l++)
-                    {
-                        filter_current_pixel = paddedImg[INDEX((i + k), (j + l), (Cols + filter_hw + filter_hw))];
+                    filter_current_pixel = paddedImg[INDEX((i + k), (j + l), (Cols + filter_hw + filter_hw))];
 
-                        //photometric distance = difference in pixel values (squared)
-                        pd = paddedImg[INDEX( i, j, (Cols + filter_hw +  filter_hw))] - filter_current_pixel;
-                        pd = pd * pd;
+                    //photometric distance = difference in pixel values (squared)
+                    pd = paddedImg[INDEX( i, j, (Cols + filter_hw +  filter_hw))] - filter_current_pixel;
+                    pd = pd * pd;
 
-                        gaussian_ph = exp( -(pd) / (2*sigma_ph*sigma_ph) );
-                        gaussian_bl = gaussian_ph * gaussian_sp[INDEX((k+filter_hw), (l+filter_hw), (2*filter_hw + 1))] ;
+                    gaussian_ph = exp( -(pd) / (2*sigma_ph*sigma_ph) );
+                    gaussian_bl = gaussian_ph * gaussian_sp[INDEX((k+filter_hw), (l+filter_hw), (2*filter_hw + 1))] ;
 
-                        filtered_pixel += gaussian_bl * filter_current_pixel;
-                        normal_factor += gaussian_bl;
-                    }
+                    filtered_pixel += gaussian_bl * filter_current_pixel;
+                    normal_factor += gaussian_bl;
                 }
-                filtered_pixel = filtered_pixel / normal_factor;
-                Op_Img[INDEX((i-filter_hw), (j-filter_hw), Cols)] = filtered_pixel;
-                //filteredImg(i-filter_hw, j-filter_hw) =  filtered_pixel;
             }
+            filtered_pixel = filtered_pixel / normal_factor;
+            Op_Img[INDEX((i-filter_hw), (j-filter_hw), Cols)] = filtered_pixel;
+            //filteredImg(i-filter_hw, j-filter_hw) =  filtered_pixel;
         }
+    }
+#ifdef USE_OMP
+    }
+#endif
 }
 
 #ifdef USE_TILES
@@ -215,8 +224,15 @@ void blfilter_Tiles(float *Ip_Img, int TileSize, int rows, int cols, int filter_
 
     for( tiles = 0; tiles < numTiles; tiles++)
     {
-        ReadTile(Ip_Tile, Cols, TileSize, filter_hw , paddedImg, tiles);
 
+#ifdef USE_OMP
+#pragma omp parallel shared(paddedImg, Ip_Tile, Op_Tile, gaussian_sp, Rows, Cols,TileSize, filter_hw, sigma_ph)
+        {
+#endif
+        ReadTile(Ip_Tile, Cols, TileSize, filter_hw , paddedImg, tiles);
+#ifdef USE_OMP
+#pragma omp for private( filter_current_pixel,i,j,k,l,normal_factor,gaussian_ph, gaussian_bl, filtered_pixel,pd) 
+#endif
         for( i = filter_hw; i < TileSize + filter_hw ; i++)
         {
             for( j = filter_hw; j < TileSize + filter_hw; j++)
@@ -247,6 +263,9 @@ void blfilter_Tiles(float *Ip_Img, int TileSize, int rows, int cols, int filter_
         }
         WriteTile(Op_Tile, Cols, TileSize,Op_Img, tiles);
     }
+#ifdef USE_OMP
+    }
+#endif
 }
 #endif
 
@@ -320,7 +339,7 @@ void ReadTile(float *Tile, int Cols, int TileSize, int filter_hw , float *padded
     TilesPerRow = Cols/TileSize;
     row = floor(tileId / TilesPerRow);
     col = tileId % TilesPerRow;
-    ImageIndex = (row * TileSize) * (Cols + 2 * filter_hw) + col * TileSize ; 
+    ImageIndex = (row * TileSize) * (Cols + 2 * filter_hw) + col * TileSize ;
     for (i = 0; i < TileCols; i++)
     {
         memcpy(&(Tile[(i* TileCols)]), &(paddedImg[(ImageIndex + (i * (Cols + 2 * filter_hw )) )]), (TileCols * sizeof(float)));
