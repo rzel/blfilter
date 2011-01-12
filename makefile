@@ -4,7 +4,7 @@
  LIB =  -lpthread -openmp -lX11 -lm
  #CC = /opt/intel/Compiler/11.1/073/bin/intel64/icpc
  CC = /opt/intel/Compiler/11.1/072/bin/intel64/icpc
- #FLAG = -g
+ FLAG = -g
 
  all: bNptD bNptF bNptFOMP bSSEa bSSEaR bSSEI bSSEIR bLlw bL2w 
 
