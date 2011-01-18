@@ -3,10 +3,12 @@
  VPATH = ../src
  LIB =  -lpthread -openmp -lX11 -lm
  #CC = /opt/intel/Compiler/11.1/073/bin/intel64/icpc
- CC = /opt/intel/Compiler/11.1/072/bin/intel64/icpc
- FLAG = -g
+ CC = icpc
+ #FLAG = -g
+ FLAG =  -xSSE4.2 -O3 -L/home/dinesh/opt/intel/compilerpro-12.0.1.107/compiler/lib/intel64 -I/home/dinesh/opt/intel/compilerpro-12.0.1.107/compiler/include -opt-streaming-stores always 
 
- all: bNptD bNptF bNptFOMP bSSEa bSSEaR bSSEI bSSEIR bLlw bL2w 
+ #all: bNptD bNptF bNptFOMP bSSEa bSSEaR bSSEI bSSEIR bLlw bL2w 
+ all: bfilter bfilterOMP bfilterTile bfilterTileOMP bfilterExpTile bfilterExpTileOMP
 
 bNptD: $(SRC_PATH)/CImg.h $(SRC_PATH)/def.h
 	$(CC)  $(SRC_PATH)/blfilter_noopt_double.cpp -o $(BUILD_PATH)/$@ $(FLAG) $(LIB) 
@@ -49,5 +51,11 @@ bfilterTile: $(SRC_PATH)/CImg.h $(SRC_PATH)/def.h
 
 bfilterTileOMP: $(SRC_PATH)/CImg.h $(SRC_PATH)/def.h
 	$(CC)  $(SRC_PATH)/blfilter.cpp -o $(BUILD_PATH)/$@ $(FLAG) $(LIB) -DUSE_TILES -DUSE_OMP 
+
+bfilterExpTile: $(SRC_PATH)/CImg.h $(SRC_PATH)/def.h
+	$(CC)  $(SRC_PATH)/blfilter.cpp -o $(BUILD_PATH)/$@ $(FLAG) $(LIB) -DEXP_TILES 
+
+bfilterExpTileOMP: $(SRC_PATH)/CImg.h $(SRC_PATH)/def.h
+	$(CC)  $(SRC_PATH)/blfilter.cpp -o $(BUILD_PATH)/$@ $(FLAG) $(LIB) -DEXP_TILES -DUSE_OMP 
 clean:	
 	rm $(BUILD_PATH)/*
