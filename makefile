@@ -4,8 +4,8 @@
  LIB =  -lpthread -openmp -lX11 -lm
  #CC = /opt/intel/Compiler/11.1/073/bin/intel64/icpc
  CC = icpc
- #FLAG = -g
- FLAG =  -xSSE4.2 -O3 -L/home/dinesh/opt/intel/compilerpro-12.0.1.107/compiler/lib/intel64 -I/home/dinesh/opt/intel/compilerpro-12.0.1.107/compiler/include -opt-streaming-stores always 
+ FLAG = -xSSE3
+ #FLAG =  -xSSE3 -O3 -L/opt/intel/compilerpro-12.0.1.107/compiler/lib/ia32 -I/opt/intel/compilerpro-12.0.1.107/compiler/include -opt-streaming-stores always 
 
  #all: bNptD bNptF bNptFOMP bSSEa bSSEaR bSSEI bSSEIR bLlw bL2w 
  all: bfilter bfilterOMP bfilterTile bfilterTileOMP bfilterExpTile bfilterExpTileOMP
