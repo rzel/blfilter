@@ -2,6 +2,7 @@
 #include <sys/time.h>
 #include "CImg.h"
 #include <omp.h>
+#include <ia32intrin.h>
 using namespace cimg_library;
 
 /*Function Declarations */
@@ -13,6 +14,9 @@ void blfilter_Read_Tiles(float *paddedImg, float *gaussian_sp, int TileSize, int
 #ifdef USE_TILES
 void blfilter_Tiles(float *paddedImg, float *gaussian_sp, int TileSize, int rows, int cols, int filter_hw, float sigma_sp, float sigma_ph, float *Op_Img);
 #endif
+
+_MM_ALIGN16 float getFilteredPixel(float* Ip_Tile, float* gaussian_sp, float sigmasq, int i, int j, int filter_hw, int rows, int cols, int TileSize);
+CImg<float> writeCIMGFromArr(float* imgArr, int rows, int cols);
 
 double my_difftime();
 void *MyCalloc(int MemSize);
@@ -147,11 +151,6 @@ int main(int argc, char* argv[])
 
 
 
-
-
-
-
-
 void blfilter(float *paddedImg, float *gaussian_sp, int rows, int cols, int filter_hw, float sigma_sp, float sigma_ph, float *Op_Img)
 {
     float filter_current_pixel = 0; //local window
@@ -165,6 +164,7 @@ void blfilter(float *paddedImg, float *gaussian_sp, int rows, int cols, int filt
     //image height and width
     int Rows = rows;
     int Cols = cols;
+    float sigmasq  = 1/(-2*sigma_ph*sigma_ph);	
 
 
 #ifdef USE_OMP
@@ -189,7 +189,7 @@ void blfilter(float *paddedImg, float *gaussian_sp, int rows, int cols, int filt
                     pd = paddedImg[INDEX( i, j, (Cols + filter_hw +  filter_hw))] - filter_current_pixel;
                     pd = pd * pd;
 
-                    gaussian_ph = exp( -(pd) / (2*sigma_ph*sigma_ph) );
+                    gaussian_ph = exp( pd * sigmasq );
                     gaussian_bl = gaussian_ph * gaussian_sp[INDEX((k+filter_hw), (l+filter_hw), (2*filter_hw + 1))] ;
 
                     filtered_pixel += gaussian_bl * filter_current_pixel;
@@ -204,14 +204,6 @@ void blfilter(float *paddedImg, float *gaussian_sp, int rows, int cols, int filt
     }
 #endif
 }
-
-
-
-
-
-
-
-
 
 
 
@@ -245,6 +237,7 @@ void blfilter_Tiles(float *paddedImg, float *gaussian_sp, int TileSize, int rows
     int numTiles = (Rows * Cols) / (TileSize * TileSize);
     Ip_Tile = (float *) _mm_malloc( (TileSize + 2 * filter_hw ) * ( TileSize + 2 * filter_hw) * sizeof(float),16);
     Op_Tile = (float *) _mm_malloc( TileSize  * TileSize  * sizeof(float), 16);
+    float sigmasq  = 1/(-2*sigma_ph*sigma_ph);	
 #ifdef USE_OMP
 #pragma omp parallel shared(paddedImg, gaussian_sp, Rows, Cols, TileSize, filter_hw, sigma_ph)
         {
@@ -275,7 +268,7 @@ void blfilter_Tiles(float *paddedImg, float *gaussian_sp, int TileSize, int rows
                         //photometric distance = difference in pixel values (squared)
                         pd = pixel_value - filter_current_pixel;
                         pd = pd * pd;
-                        gaussian_ph = exp( -(pd) / (2*sigma_ph*sigma_ph) );
+                        gaussian_ph = exp(pd * sigmasq);
                         gaussian_bl = gaussian_ph * gaussian_sp[INDEX((k+filter_hw), (l+filter_hw), (2*filter_hw + 1))] ;
                         filtered_pixel += gaussian_bl * filter_current_pixel;
                         normal_factor += gaussian_bl;
@@ -293,13 +286,6 @@ void blfilter_Tiles(float *paddedImg, float *gaussian_sp, int TileSize, int rows
 #endif
 }
 #endif
-
-
-
-
-
-
-
 
 
 
@@ -334,6 +320,7 @@ void blfilter_Read_Tiles(float *paddedImg, float *gaussian_sp, int TileSize, int
     int numTiles = (Rows * Cols) / (TileSize * TileSize);
     Ip_Tile = (float *) _mm_malloc( (TileSize + 2 * filter_hw ) * ( TileSize + 2 * filter_hw) * sizeof(float), 16);
     Op_Tile = (float *) _mm_malloc( TileSize  * TileSize  * sizeof(float), 16);
+    float sigmasq  = 1/(-2*sigma_ph*sigma_ph);		
 #ifdef USE_OMP
 #pragma omp parallel shared(Ip_Tile, Op_Tile, paddedImg, gaussian_sp, Rows, Cols, TileSize, filter_hw, sigma_ph)
         {
@@ -346,30 +333,23 @@ void blfilter_Read_Tiles(float *paddedImg, float *gaussian_sp, int TileSize, int
         {
             for( j = filter_hw; j < TileSize + filter_hw; j++)
             {
-                filtered_pixel = 0;
-                normal_factor  = 0;
-                pixel_value = Ip_Tile[INDEX( i, j, (TileSize + filter_hw +  filter_hw))];
-                for( k = -filter_hw ; k <= filter_hw ; k++)
-                {
-                    for( l = -filter_hw ; l <= filter_hw ; l++)
-                    {
-                        filter_current_pixel = Ip_Tile[INDEX((i + k), (j + l), (TileSize + filter_hw + filter_hw))];
-                        //photometric distance = difference in pixel values (squared)
-                        pd = pixel_value - filter_current_pixel;
-                        pd = pd * pd;
-
-                        gaussian_ph = exp( -(pd) / (2*sigma_ph*sigma_ph) );
-                        gaussian_bl = gaussian_ph * gaussian_sp[INDEX((k+filter_hw), (l+filter_hw), (2*filter_hw + 1))] ;
-                        filtered_pixel += gaussian_bl * filter_current_pixel;
-                        normal_factor += gaussian_bl;
-                    }
-                }
-                filtered_pixel = filtered_pixel / normal_factor;
+		
+		filtered_pixel = getFilteredPixel(Ip_Tile, gaussian_sp, sigmasq, i, j, filter_hw, rows, cols, TileSize);
                 Op_Tile[INDEX((i-filter_hw), (j-filter_hw), TileSize)] = filtered_pixel;
-                //filteredImg(i-filter_hw, j-filter_hw) =  filtered_pixel;
+ 
             }
         }
-        WriteTile(Op_Tile, Cols, TileSize,Op_Img, tiles);
+        WriteTile(Op_Tile, Cols, TileSize, Op_Img, tiles);
+	
+	/** To visualize how the tiles are written in image
+	CImg<float> partialImg = writeCIMGFromArr(Op_Img, rows, cols);
+	CImgDisplay flt_disp(partialImg, "Filtered Image");		
+
+	while (!flt_disp.is_closed() ) {
+	flt_disp.wait();  
+        }
+	**/	
+
     }
 #ifdef USE_OMP
     }
@@ -377,6 +357,112 @@ void blfilter_Read_Tiles(float *paddedImg, float *gaussian_sp, int TileSize, int
 }
 #endif
 
+CImg<float> writeCIMGFromArr(float* imgArr, int rows, int cols) {
+	CImg<float> img(cols, rows,1,1,0);
+
+	for(int i = 0; i < rows; i++)
+		for(int j = 0; j < cols; j++) {
+			img(i, j) = imgArr[INDEX(i,j,cols)];
+	}
+
+	return img;
+
+}
+
+_MM_ALIGN16 float getFilteredPixel(float* Ip_Tile, float* gaussian_sp, float sigmasq, int i, int j, int filter_hw, int rows, int cols, int TileSize) {
+
+	__declspec(align(16)) float local_pixel0 = 0; //local window
+	__declspec(align(16)) float local_pixel1 = 0;
+	__declspec(align(16)) float local_pixel2 = 0;
+	__declspec(align(16)) float local_pixel3 = 0;
+
+	__declspec(align(16)) float pd0 = 0; //photometric distance
+	__declspec(align(16)) float pd1 = 0;
+	__declspec(align(16)) float pd2 = 0;
+	__declspec(align(16)) float pd3 = 0;
+
+	__declspec(align(16)) float gaussian_ph0 = 0; //photometric filter coefficient
+	__declspec(align(16)) float gaussian_ph1 = 0;
+	__declspec(align(16)) float gaussian_ph2 = 0;
+	__declspec(align(16)) float gaussian_ph3 = 0;
+
+	__declspec(align(16)) float gaussian_bl0 = 0; //bilateral filter coefficient
+	__declspec(align(16)) float gaussian_bl1 = 0;
+	__declspec(align(16)) float gaussian_bl2 = 0;
+	__declspec(align(16)) float gaussian_bl3 = 0;
+
+	__declspec(align(16)) float filtered_pixel0 = 0; //filtered value of pixel 
+	__declspec(align(16)) float filtered_pixel1 = 0;
+	__declspec(align(16)) float filtered_pixel2 = 0;
+	__declspec(align(16)) float filtered_pixel3 = 0;	
+
+	__declspec(align(16)) float filtered_pixel = 0;
+
+	__declspec(align(16)) float normal_factor = 0; //total weight of the filter window used to normalize the filtered coefficient
+
+	_MM_ALIGN16 float spk0 = 0, spk1 = 0, spk2 = 0, spk3 = 0; 
+
+	
+	__declspec(align(16)) float pixel_value = Ip_Tile[INDEX( i, j, (TileSize + filter_hw +  filter_hw))];
+
+		//1. calculate the photometric gaussian distances and the filter coefficent (no need to create a full kernel)	
+		//2. multiply each pixel of the window with the spatial and photometric coefficients
+
+		//#pragma ivdep
+		for(int k = -filter_hw ; k <= filter_hw ; k+=2)
+			for(int l = -filter_hw ; l <= filter_hw ; l+=2) {
+			
+			//local_window[k + filter_hw][l + filter_hw] = paddedImg(i + k, j + l);
+						
+			local_pixel0 = Ip_Tile[INDEX((i+k), (j+l), (TileSize + filter_hw + filter_hw))];
+			local_pixel1 = Ip_Tile[INDEX((i+k), (j+l+1), (TileSize + filter_hw + filter_hw))];
+			local_pixel2 = Ip_Tile[INDEX((i+k+1), (j+l), (TileSize + filter_hw + filter_hw))];
+			local_pixel3 = Ip_Tile[INDEX((i+k+1), (j+l+1), (TileSize + filter_hw + filter_hw))];
+
+			spk0 = gaussian_sp[INDEX((k+filter_hw), (l+filter_hw), (2*filter_hw + 1))];
+			spk1 = gaussian_sp[INDEX((k+filter_hw), (l+1+filter_hw), (2*filter_hw + 1))];
+			spk2 = gaussian_sp[INDEX((k+1+filter_hw), (l+filter_hw), (2*filter_hw + 1))];
+			spk3 = gaussian_sp[INDEX((k+1+filter_hw), (l+1+filter_hw), (2*filter_hw + 1))];
+			
+			//photometric distance = difference in pixel values (squared)
+			pd0 = pixel_value - local_pixel0;
+			pd1 = pixel_value - local_pixel1;
+			pd2 = pixel_value - local_pixel2;
+			pd3 = pixel_value - local_pixel3;
+
+			pd0 = pd0 * pd0;  
+			pd1 = pd1 * pd1;  
+			pd2 = pd2 * pd2;  
+			pd3 = pd3 * pd3;  
+
+			gaussian_ph0 = exp( pd0 * sigmasq );
+			gaussian_ph1 = exp( pd1 * sigmasq );
+			gaussian_ph2 = exp( pd2 * sigmasq );
+			gaussian_ph3 = exp( pd3 * sigmasq );			
+	
+			gaussian_bl0 = gaussian_ph0 * spk0;
+			gaussian_bl1 = gaussian_ph1 * spk1;
+			gaussian_bl2 = gaussian_ph2 * spk2;
+			gaussian_bl3 = gaussian_ph3 * spk3;
+
+			if(k == filter_hw){gaussian_bl2 = 0; gaussian_bl3 = 0;}
+			if(l == filter_hw){gaussian_bl1 = 0; gaussian_bl3 = 0;}
+
+			filtered_pixel0 += gaussian_bl0 * local_pixel0;	
+			filtered_pixel1 += gaussian_bl1 * local_pixel1;
+			filtered_pixel2 += gaussian_bl2 * local_pixel2;	
+			filtered_pixel3 += gaussian_bl3 * local_pixel3;
+
+			normal_factor += (gaussian_bl0 + gaussian_bl1 + gaussian_bl2 + gaussian_bl3);	
+							
+		} 
+
+		filtered_pixel = (filtered_pixel0 + filtered_pixel1 + filtered_pixel1 + filtered_pixel3) / normal_factor;
+
+	return filtered_pixel;
+
+
+}
 
 /*----------------------------------------------------------------------------
  *  * Function ........... MyMalloc
