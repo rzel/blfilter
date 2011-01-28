@@ -315,25 +315,24 @@ void blfilter_Read_Tiles(float *paddedImg, float *gaussian_sp, int outerTileSize
     int tiles, innertiles;
     /* A tile has tile size full of pixels from input image and every other pixel needed to calculate filtered tile */
     int numTiles = (Rows * Cols) / (outerTileSize * outerTileSize);
-    int innernumTiles = (outerTileSize * outerTileSize/ (innerTileSize * innerTileSize));
+    int innernumTiles = (outerTileSize * outerTileSize)/ (innerTileSize * innerTileSize);
+
+    float sigmasq  = 1/(-2*sigma_ph*sigma_ph);
+#ifdef USE_OMP
+#pragma omp parallel private(Ip_Tile, Op_Tile, inner_Ip_Tile, inner_Op_Tile) shared(paddedImg, gaussian_sp, Rows, Cols, innerTileSize, outerTileSize, filter_hw, sigma_ph)
+    {
+#endif
     posix_memalign((void **)&Ip_Tile, 64, ( (outerTileSize + 2 * filter_hw ) * ( outerTileSize + 2 * filter_hw) * sizeof(float)));
     posix_memalign((void **)&Op_Tile, 64, ( outerTileSize  * outerTileSize  * sizeof(float)));
-
     /* Create Inner Tiles */
     posix_memalign((void **)&inner_Ip_Tile, 64, ( (innerTileSize + 2 * filter_hw ) * ( innerTileSize + 2 * filter_hw) * sizeof(float)));
     posix_memalign((void **)&inner_Op_Tile, 64, ( innerTileSize  * innerTileSize  * sizeof(float)));
-    float sigmasq  = 1/(-2*sigma_ph*sigma_ph);
 #ifdef USE_OMP
-#pragma omp parallel firstprivate(Ip_Tile, Op_Tile) shared(paddedImg, gaussian_sp, Rows, Cols, innerTileSize, outerTileSize, filter_hw, sigma_ph)
-    {
-#endif
-#ifdef USE_OMP
-#pragma omp for private( tiles, filter_current_pixel,i,j,k,l,innertiles,normal_factor,gaussian_ph, gaussian_bl, filtered_pixel,pd)
+#pragma omp for private(tiles, filter_current_pixel,i,j,k,l,innertiles,normal_factor,gaussian_ph, gaussian_bl, filtered_pixel,pd)
 #endif
         for( tiles = 0; tiles < numTiles; tiles++)
         {
             ReadTile(Ip_Tile, Cols, outerTileSize, filter_hw , paddedImg, tiles);
-
             for (innertiles = 0; innertiles < innernumTiles; innertiles++)
             {
                 ReadTile(inner_Ip_Tile, outerTileSize , innerTileSize, filter_hw , Ip_Tile, innertiles);
@@ -341,8 +340,7 @@ void blfilter_Read_Tiles(float *paddedImg, float *gaussian_sp, int outerTileSize
                 {
                     for( j = filter_hw; j < innerTileSize + filter_hw; j++)
                     {
-                        filtered_pixel = 0;
-                        filtered_pixel = getFilteredPixel(inner_Ip_Tile, gaussian_sp, sigmasq, i, j, filter_hw, rows, cols, innerTileSize);
+                        filtered_pixel = getFilteredPixel(inner_Ip_Tile, gaussian_sp, sigmasq, i, j, filter_hw, outerTileSize, outerTileSize, innerTileSize);
                         inner_Op_Tile[INDEX((i-filter_hw), (j-filter_hw), innerTileSize)] = filtered_pixel;
                     }
                 }
