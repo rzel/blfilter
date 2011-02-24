@@ -6,24 +6,16 @@
 #define CACHE_SIZE 64
 #define INDEX(i, j, width) i*width + j
 using namespace cimg_library;
-CImg<float>  blfilter(CImg<float>, int, float, float);
-float* intrinadd(float* pa, float* pb);
+CImg<float>  blfilter_SSEintrin(CImg<float>, int, float, float);
+CImg<float>  blfilter_noopt(CImg<float>, int, float, float);
+CImg<float>  blfilter_Tiles(CImg<float>, int, float, float, int);
+CImg<float>  blfilter_SSEintrin_reduction(CImg<float>, int, float, float);
+CImg<float>  blfilter_SSEassembly(CImg<float>, int, float, float);
+CImg<float>  blfilter_SSEassembly_reduction(CImg<float>, int, float, float);
+CImg<float>  blfilter_lpunroll_2dwindow(CImg<float>, int, float, float);
+CImg<float>  blfilter_lpunroll_linearwindow(CImg<float>, int, float, float);
 double my_difftime();
 void *MyMalloc(int MemSize);
-
-float* intrinadd(float* pa, float* pb) {
-	
-	float pc[4];
-	
-	__m128 *t0 = (__m128*)pa;
-	__m128 *t1 = (__m128*)pb;
-	__m128 *t3 = (__m128*)pc;
-	*t3 = _mm_add_ps(*t0, *t1);	
-	*t3 = _mm_exp_ps(*t3);	
-
-	return pc;
-}
-
 double my_difftime ()
 {
     struct timeval tp;
@@ -35,19 +27,31 @@ double my_difftime ()
 };
 
 
-int main(int argc, char* args[]) 
+int main(int argc, char* argv[]) 
 {
-	char* fileName = args[1];
-	int filter_hw = (int)atoi(args[2]);
-	float sigma_sp = (float)atoi(args[3]);
-	float sigma_ph = (float)atoi(args[4]);
-	CImg<float> image(fileName);
-	int dx = image.width();
-	int dy = image.height();
-	int ds = image.spectrum(); //Gray or RGB (or could be more channels);
-	
-	//create a single image dz = 1, rgb channel  = 1 (only gray); fill it with 0s.
-	CImg<float> grayImg(dx,dy,1,1,0);
+    if (argc != 7)
+    {
+        fprintf(stderr, "Usage: %s <Image File> <Filter Radius> <Sigma Spatial> <Sigma Photometric> <Display Output(0/1)> <TileSize>\n", argv[0]);
+        exit(0);
+    }
+    char* fileName = argv[1];
+    int filter_hw = (int)atoi(argv[2]);
+    float sigma_sp = (float)atoi(argv[3]);
+    float sigma_ph = (float)atoi(argv[4]);
+    int TileSize = atoi(argv[6]);
+    int ShowOutput = atoi(argv[5]);
+    CImg<float> image(fileName);
+    int dx = image.width();
+    int dy = image.height();
+    int ds = image.spectrum(); //Gray or RGB (or could be more channels);
+
+
+    if ((dx % TileSize != 0) || (dy % TileSize !=0))
+    {
+            printf("Image width = %d or Height = %d is not divisible by TileSize\nexiting..",dx, dy);
+            exit(1);
+        }
+    CImg<float> grayImg(dx,dy,1,1,0);
 	
 	if(ds == 3) 
 	{ //convert the input RGB to gray image. (work with gray image for now)
@@ -65,28 +69,161 @@ int main(int argc, char* args[])
 	
 	
 	double start, end, elapsed;
+    //printf("No optimization\n");
 	start = my_difftime();
-	
-	//call the filtering function
-	CImg<float> filteredImg = blfilter(grayImg, filter_hw, sigma_sp, sigma_ph);
-	end = clock();
+	CImg<float> filteredImg = blfilter_noopt(grayImg, filter_hw, sigma_sp, sigma_ph);
+	end = my_difftime();
 	elapsed = end - start;
-	//stop= _rdtsc();
-	
-	printf("Time taken for filtering = %f \n", elapsed);
-	
-	//create display windows
-	//CImgDisplay main_disp(image, "Lena");	
-	CImgDisplay gray_disp(grayImg, "Gray Image");
-	CImgDisplay flt_disp(filteredImg, "Filtered Image");
-	
-	//create event loop to display the image
-	while (!gray_disp.is_closed() ) 
+	printf("%f, ", elapsed);
+ 	if (ShowOutput == 1)
 	{
+        CImgDisplay gray_disp(grayImg, "Gray Image");
+	    CImgDisplay flt_disp(filteredImg, "Filtered Image");
+	
+	    //create event loop to display the image
+	    while (!gray_disp.is_closed() ) 
+	    {
 		gray_disp.wait();  
 		//flt_disp.wait();
+	    }
 	}
 
+    //printf("Tiles \n");
+	start = my_difftime();
+	filteredImg = blfilter_Tiles(grayImg, filter_hw, sigma_sp, sigma_ph, TileSize);
+	end = my_difftime();
+	elapsed = end - start;
+	printf("%f, ", elapsed);
+	if (ShowOutput == 1)
+	{
+        CImgDisplay gray_disp(grayImg, "Gray Image");
+	    CImgDisplay flt_disp(filteredImg, "Filtered Image");
+	
+	    //create event loop to display the image
+	    while (!gray_disp.is_closed() ) 
+	    {
+		gray_disp.wait();  
+		//flt_disp.wait();
+	    }
+	}
+
+
+    //printf("SSE Intrinsic\n");
+	start = my_difftime();
+	filteredImg = blfilter_SSEassembly(grayImg, filter_hw, sigma_sp, sigma_ph);
+	end = my_difftime();
+	elapsed = end - start;
+	printf("%f, ", elapsed);
+	if (ShowOutput == 1)
+	{
+        CImgDisplay gray_disp(grayImg, "Gray Image");
+	    CImgDisplay flt_disp(filteredImg, "Filtered Image");
+	
+	    //create event loop to display the image
+	    while (!gray_disp.is_closed() ) 
+	    {
+		gray_disp.wait();  
+		//flt_disp.wait();
+	    }
+	}
+
+
+    //printf("SSE Intrinsic Reduction\n");
+	start = my_difftime();
+	filteredImg = blfilter_SSEassembly_reduction(grayImg, filter_hw, sigma_sp, sigma_ph);
+	end = my_difftime();
+	elapsed = end - start;
+	printf("%f, ", elapsed);
+	if (ShowOutput == 1)
+	{
+        CImgDisplay gray_disp(grayImg, "Gray Image");
+	    CImgDisplay flt_disp(filteredImg, "Filtered Image");
+	
+	    //create event loop to display the image
+	    while (!gray_disp.is_closed() ) 
+	    {
+		gray_disp.wait();  
+		//flt_disp.wait();
+	    }
+	}
+	
+	start = my_difftime();
+	filteredImg = blfilter_SSEintrin(grayImg, filter_hw, sigma_sp, sigma_ph);
+	end = my_difftime();
+	elapsed = end - start;
+	printf("%f, ", elapsed);
+	if (ShowOutput == 1)
+	{
+        CImgDisplay gray_disp(grayImg, "Gray Image");
+	    CImgDisplay flt_disp(filteredImg, "Filtered Image");
+	
+	    //create event loop to display the image
+	    while (!gray_disp.is_closed() ) 
+	    {
+		gray_disp.wait();  
+		//flt_disp.wait();
+	    }
+	}
+
+
+    //printf("SSE Assembly Reduction\n");
+	start = my_difftime();
+	filteredImg = blfilter_SSEintrin_reduction(grayImg, filter_hw, sigma_sp, sigma_ph);
+	end = my_difftime();
+	elapsed = end - start;
+	printf("%f, ", elapsed);
+	if (ShowOutput == 1)
+	{
+        CImgDisplay gray_disp(grayImg, "Gray Image");
+	    CImgDisplay flt_disp(filteredImg, "Filtered Image");
+	
+	    //create event loop to display the image
+	    while (!gray_disp.is_closed() ) 
+	    {
+		gray_disp.wait();  
+		//flt_disp.wait();
+	    }
+	}
+/*
+    printf("Loop Unrolling with 2D window\n");
+	start = my_difftime();
+	filteredImg = blfilter_lpunroll_2dwindow(grayImg, filter_hw, sigma_sp, sigma_ph);
+	end = my_difftime();
+	elapsed = end - start;
+	printf("Time taken for filtering = %f \n", elapsed);
+	if (ShowOutput == 1)
+	{
+            CImgDisplay gray_disp(grayImg, "Gray Image");
+	    CImgDisplay flt_disp(filteredImg, "Filtered Image");
+	
+	    //create event loop to display the image
+	    while (!gray_disp.is_closed() ) 
+	    {
+		gray_disp.wait();  
+		//flt_disp.wait();
+	    }
+	}
+
+
+        printf("Loop unrolling with Linear Window\n");
+	start = my_difftime();
+	filteredImg = blfilter_lpunroll_linearwindow(grayImg, filter_hw, sigma_sp, sigma_ph);
+	end = my_difftime();
+	elapsed = end - start;
+	printf("Time taken for filtering = %f \n", elapsed);
+	if (ShowOutput == 1)
+	{
+            CImgDisplay gray_disp(grayImg, "Gray Image");
+	    CImgDisplay flt_disp(filteredImg, "Filtered Image");
+	
+	    //create event loop to display the image
+	    while (!gray_disp.is_closed() ) 
+	    {
+		gray_disp.wait();  
+		//flt_disp.wait();
+	    }
+	}
+*/
 }
 
 
@@ -95,6 +232,7 @@ CImg<float>  blfilter_SSEintrin(CImg<float> grayImg, int filter_hw, float sigma_
 	//image height and width	
 	int dx = grayImg.width();
 	int dy = grayImg.height();
+    int i,j,k,l,m;
 		
 	//gaussian kernel for the spatial distances
 	float gaussian_sp[2*filter_hw + 1][2*filter_hw + 1]; 	 
@@ -134,10 +272,10 @@ CImg<float>  blfilter_SSEintrin(CImg<float> grayImg, int filter_hw, float sigma_
 #ifdef USE_OMP
 	#pragma omp parallel shared(filteredImg, paddedImg, linwindowg)
 	{
-	#pragma omp for private(filtered_pixel, i, j, k, l, filtered_pixel, normal_factor, lwcount, linwindow, blfiltered, normwin, lp, pmg, sgmas,gfp, spk)
+	#pragma omp for private(i, j, k, m, filtered_pixel, normal_factor)
 #endif
-	for(int i = filter_hw; i < dx + filter_hw  ; i++)
-		for(int j = filter_hw; j < dy + filter_hw; j++) {
+	for( i = filter_hw; i < dx + filter_hw  ; i++)
+		for( j = filter_hw; j < dy + filter_hw; j++) {
 				
 		filtered_pixel = 0;
 		normal_factor = 0;
@@ -147,8 +285,8 @@ CImg<float>  blfilter_SSEintrin(CImg<float> grayImg, int filter_hw, float sigma_
 		__declspec(align(16)) float sigmasq  = -2*sigma_ph*sigma_ph;
 		__declspec(align(16)) float linwindow[sizewin];
 	
-		for(int k = -filter_hw ; k <= filter_hw ; k++) 
-			for(int m = -filter_hw ; m <= filter_hw ; m++)  {
+		for( k = -filter_hw ; k <= filter_hw ; k++) 
+			for(m = -filter_hw ; m <= filter_hw ; m++)  {
 				linwindow[lwcount++] = paddedImg(i + k, j + m);
 				}
 
@@ -165,7 +303,9 @@ CImg<float>  blfilter_SSEintrin(CImg<float> grayImg, int filter_hw, float sigma_
 			    gfp = _mm_sub_ps(pmg, lp);
 			    gfp = _mm_mul_ps(gfp, gfp);
 			    gfp = _mm_div_ps(gfp, sgmas);
+#ifndef NO_COMP
 			    gfp = _mm_exp_ps(gfp); //photometric filter coeff
+#endif
 			    gfp = _mm_mul_ps(gfp, spk); //bilateral filter coeff
 
 			    _mm_store_ps(normwin + l, gfp); //for normalization coefficient
@@ -199,11 +339,12 @@ CImg<float>  blfilter_SSEintrin_reduction(CImg<float> grayImg, int filter_hw, fl
 	//image height and width	
 	int dx = grayImg.width();
 	int dy = grayImg.height();
+    int i,j,k,l,m;
 	//gaussian kernel for the spatial distances
 	float gaussian_sp[2*filter_hw + 1][2*filter_hw + 1]; 	 
 
-	for(int i = -filter_hw; i<= filter_hw ; i++)
-		for(int j = -filter_hw; j<= filter_hw; j++) {
+	for( i = -filter_hw; i<= filter_hw ; i++)
+		for(j = -filter_hw; j<= filter_hw; j++) {
 			gaussian_sp[i+filter_hw][j+filter_hw] = exp( -(j*j + i*i) / (2*sigma_sp*sigma_sp) );
 		}	 
 
@@ -213,8 +354,8 @@ CImg<float>  blfilter_SSEintrin_reduction(CImg<float> grayImg, int filter_hw, fl
 	//zero pad the input image to accomodate filtering at the boundary
 	CImg<float> paddedImg(dx + 2 * filter_hw, dy + 2 * filter_hw, 1, 1, 0);
 
-	for(int i = 0; i < dx; i++)
-		for(int j = 0; j < dy; j++)
+	for( i = 0; i < dx; i++)
+		for( j = 0; j < dy; j++)
 			paddedImg(i + filter_hw, j + filter_hw) = grayImg(i,j);	
 
 
@@ -234,10 +375,10 @@ CImg<float>  blfilter_SSEintrin_reduction(CImg<float> grayImg, int filter_hw, fl
 #ifdef USE_OMP
 	#pragma omp parallel shared(filteredImg, paddedImg, linwindowg)
 	{
-	#pragma omp for private(filtered_pixel, i, j, k, l, filtered_pixel, normal_factor, lwcount, linwindow, blfiltered, normwin, lp, pmg, sgmas,gfp, spk)
+	#pragma omp for private(i, j, k, m, filtered_pixel, normal_factor)
 #endif
-	for(int i = filter_hw; i < dx + filter_hw  ; i++)
-		for(int j = filter_hw; j < dy + filter_hw; j++) {
+	for( i = filter_hw; i < dx + filter_hw  ; i++)
+		for(j = filter_hw; j < dy + filter_hw; j++) {
 				
 		filtered_pixel = 0;
 		normal_factor = 0;
@@ -247,8 +388,8 @@ CImg<float>  blfilter_SSEintrin_reduction(CImg<float> grayImg, int filter_hw, fl
 		__declspec(align(16)) float sigmasq  = -2*sigma_ph*sigma_ph;
 		__declspec(align(16)) float linwindow[sizewin];
 	
-		for(int k = -filter_hw ; k <= filter_hw ; k++) 
-			for(int m = -filter_hw ; m <= filter_hw ; m++)  
+		for( k = -filter_hw ; k <= filter_hw ; k++) 
+			for( m = -filter_hw ; m <= filter_hw ; m++)  
 			{
 				linwindow[lwcount++] = paddedImg(i + k, j + m);
 			}
@@ -272,7 +413,9 @@ CImg<float>  blfilter_SSEintrin_reduction(CImg<float> grayImg, int filter_hw, fl
 			    gfp = _mm_sub_ps(pmg, lp);
 			    gfp = _mm_mul_ps(gfp, gfp);
 			    gfp = _mm_div_ps(gfp, sgmas);
+#ifndef NO_COMP
 			    gfp = _mm_exp_ps(gfp); //photometric filter coeff
+#endif
 			    gfp = _mm_mul_ps(gfp, spk); //bilateral filter coeff
 			    o1 = _mm_hadd_ps(o1, gfp);	//normalization coefficient using reduction
 			    gfp = _mm_mul_ps(gfp, lp); //multiply it with the local window (filtered coeff)
@@ -304,6 +447,7 @@ CImg<float>  blfilter_SSEassembly(CImg<float> grayImg, int filter_hw, float sigm
 	//image height and width	
 	int dx = grayImg.width();
 	int dy = grayImg.height();
+    int i,j,k,l,m;
 		
 
 
@@ -342,10 +486,10 @@ CImg<float>  blfilter_SSEassembly(CImg<float> grayImg, int filter_hw, float sigm
 #ifdef USE_OMP
 	#pragma omp parallel shared(filteredImg, paddedImg, linwindowg)
 	{
-	#pragma omp for private(filtered_pixel, i, j, k, l, filtered_pixel, normal_factor, lwcount, linwindow, blfiltered, normwin, lp, pmg, sgmas,gfp, spk)
+	#pragma omp for private(filtered_pixel, i, j, k, m, normal_factor)
 #endif
-	for(int i = filter_hw; i < dx + filter_hw  ; i++)
-		for(int j = filter_hw; j < dy + filter_hw; j++) {
+	for(i = filter_hw; i < dx + filter_hw  ; i++)
+		for(j = filter_hw; j < dy + filter_hw; j++) {
 				
 		filtered_pixel = 0;
 		normal_factor = 0;
@@ -357,8 +501,8 @@ CImg<float>  blfilter_SSEassembly(CImg<float> grayImg, int filter_hw, float sigm
 		__declspec(align(16)) float sigmasq  = -2*sigma_ph*sigma_ph;
 		__declspec(align(16)) float sigmaphs[] = {sigmasq, sigmasq, sigmasq, sigmasq};		
 		
-		for(int k = -filter_hw ; k <= filter_hw ; k++) 
-			for(int m = -filter_hw ; m <= filter_hw ; m++)  {
+		for( k = -filter_hw ; k <= filter_hw ; k++) 
+			for( m = -filter_hw ; m <= filter_hw ; m++)  {
 				linwindow[lwcount++] = paddedImg(i + k, j + m);
 				}
 
@@ -445,11 +589,12 @@ CImg<float>  blfilter_SSEassembly(CImg<float> grayImg, int filter_hw, float sigm
 
 }
 
-CImg<float>  blfilter_SSEassembl_reduction(CImg<float> grayImg, int filter_hw, float sigma_sp, float sigma_ph)
+CImg<float>  blfilter_SSEassembly_reduction(CImg<float> grayImg, int filter_hw, float sigma_sp, float sigma_ph)
 {
 	//image height and width	
 	int dx = grayImg.width();
 	int dy = grayImg.height();
+        int i,j,k,l,m;
 		
 	//gaussian kernel for the spatial distances
 	float gaussian_sp[2*filter_hw + 1][2*filter_hw + 1]; 	 
@@ -487,10 +632,10 @@ CImg<float>  blfilter_SSEassembl_reduction(CImg<float> grayImg, int filter_hw, f
 #ifdef USE_OMP
 	#pragma omp parallel shared(filteredImg, paddedImg, linwindowg)
 	{
-	#pragma omp for private(filtered_pixel, i, j, k, l, filtered_pixel, normal_factor, lwcount, linwindow, blfiltered, normwin, lp, pmg, sgmas,gfp, spk)
+	#pragma omp for private(i, j, k, m, filtered_pixel, normal_factor)
 #endif
-	for(int i = filter_hw; i < dx + filter_hw  ; i++)
-		for(int j = filter_hw; j < dy + filter_hw; j++) {
+	for( i = filter_hw; i < dx + filter_hw  ; i++)
+		for( j = filter_hw; j < dy + filter_hw; j++) {
 				
 		filtered_pixel = 0;
 		normal_factor = 0;
@@ -502,8 +647,8 @@ CImg<float>  blfilter_SSEassembl_reduction(CImg<float> grayImg, int filter_hw, f
 		__declspec(align(16)) float sigmasq  = -2*sigma_ph*sigma_ph;
 		__declspec(align(16)) float sigmaphs[] = {sigmasq, sigmasq, sigmasq, sigmasq};		
 		
-		for(int k = -filter_hw ; k <= filter_hw ; k++) 
-			for(int m = -filter_hw ; m <= filter_hw ; m++)  {
+		for( k = -filter_hw ; k <= filter_hw ; k++) 
+			for( m = -filter_hw ; m <= filter_hw ; m++)  {
 				linwindow[lwcount++] = paddedImg(i + k, j + m);
 				}
 
@@ -545,7 +690,9 @@ CImg<float>  blfilter_SSEassembl_reduction(CImg<float> grayImg, int filter_hw, f
 			);
 
 			//calculate the exponential using SVML intrinsic (no assembly available)
+#ifndef NO_COMP
 			pmgc128  = _mm_exp_ps(pmgc128); //photometric gaussian coefficient
+#endif
 			
 			__asm__(
 			"movaps %2, %%xmm0 ;"
@@ -591,6 +738,431 @@ CImg<float>  blfilter_SSEassembl_reduction(CImg<float> grayImg, int filter_hw, f
 	return filteredImg;
 
 }
+
+CImg<float> blfilter_Tiles(CImg<float> grayImg, int filter_hw, float sigma_sp, float sigma_ph, int TileSize)
+{
+
+    int Cols = grayImg.width();
+	int Rows = grayImg.height();
+    int i = 0,j = 0, k = 0, l = 0;
+		
+	//gaussian kernel for the spatial distances
+	float gaussian_sp[2*filter_hw + 1][2*filter_hw + 1]; 	 
+
+	for(int i = -filter_hw; i<= filter_hw ; i++)
+		for(int j = -filter_hw; j<= filter_hw; j++) {
+			gaussian_sp[i+filter_hw][j+filter_hw] = exp( -(j*j + i*i) / (2*sigma_sp*sigma_sp) );
+		}	 
+
+	//create empty image for filtered output dz = 1, rgb channel  = 1 (only gray); fill it with 0s.
+	CImg<float> filteredImg(Rows,Cols,1,1,0);
+
+	//zero pad the input image to accomodate filtering at the boundary
+	CImg<float> paddedImg(Rows + 2 * filter_hw, Cols + 2 * filter_hw, 1, 1, 0);
+
+	for(int i = 0; i < Rows; i++)
+		for(int j = 0; j < Cols; j++)
+			paddedImg(i,j) = grayImg(i,j);	
+
+	float filtered_pixel = 0;
+	float normal_factor = 0; //total weight of the filter window used to normalize the filtered coefficient
+
+    float pd = 0, pixel_value=0;          //photometric distance
+    float gaussian_ph = 0; //photometric filter coefficient
+    float gaussian_bl = 0; //bilateral filter coefficient
+    int tiles;
+    /* A tile has tile size full of pixels from input image and every other pixel needed to calculate filtered tile */
+    int numTiles = (Rows * Cols) / (TileSize * TileSize);
+    float sigmasq  = 1.0/(-2*sigma_ph*sigma_ph);
+    float filter_current_pixel = 0;
+#ifdef USE_OMP
+#pragma omp parallel shared(paddedImg, filteredImg, gaussian_sp, Rows, Cols, TileSize, filter_hw, sigma_ph)
+    {
+#pragma omp for private( tiles, filter_current_pixel,i,j,k,l,normal_factor,gaussian_ph, gaussian_bl, filtered_pixel,pd)
+#endif
+        for( tiles = 0; tiles < numTiles; tiles++)
+        {
+            int TilesPerRow = Cols/TileSize;
+            int Tile_row = floor(tiles / TilesPerRow);
+            int Tile_col = tiles % TilesPerRow;
+            for( i = filter_hw; i < TileSize + filter_hw ; i++)
+            {
+                for( j = filter_hw; j < TileSize + filter_hw; j++)
+                {
+                    filtered_pixel = 0;
+                    normal_factor  = 0;
+                    pixel_value = paddedImg((Tile_row * TileSize) + i, (Tile_col * TileSize) + j) ;
+                    for( k = -filter_hw ; k <= filter_hw ; k++)
+                    {
+                        for( l = -filter_hw ; l <= filter_hw ; l++)
+                        {
+                            filter_current_pixel = paddedImg((Tile_row * TileSize) + i + k, (Tile_col * TileSize) + j+l);
+                            //photometric distance = difference in pixel values (squared)
+                            pd = pixel_value - filter_current_pixel;
+                            pd = pd * pd;
+#ifndef NO_COMP
+                            gaussian_ph = exp(pd * sigmasq);
+#endif
+                            gaussian_bl = gaussian_ph * gaussian_sp[k+filter_hw][l+filter_hw] ;
+                            filtered_pixel += gaussian_bl * filter_current_pixel;
+                            normal_factor += gaussian_bl;
+                        }
+                    }
+                    filtered_pixel = filtered_pixel / normal_factor;
+                    /* Write out the new value to output image */
+                    filteredImg( (Tile_row * TileSize) + i-filter_hw, (Tile_col * TileSize) + j - filter_hw) =  filtered_pixel;
+                }
+            }
+        }
+#ifdef USE_OMP
+    }
+#endif
+    return filteredImg;
+}
+
+
+
+CImg<float>  blfilter_noopt(CImg<float> grayImg, int filter_hw, float sigma_sp, float sigma_ph)
+{
+    //image height and width
+    int dx = grayImg.width();
+    int dy = grayImg.height();
+    int i = 0,j = 0, k = 0, l = 0, m=0;
+
+    //gaussian kernel for the spatial distances
+    float gaussian_sp[2*filter_hw + 1][2*filter_hw + 1];
+
+    for(i = -filter_hw; i<= filter_hw ; i++)
+        for(j = -filter_hw; j<= filter_hw; j++) {
+            gaussian_sp[i+filter_hw][j+filter_hw] = exp( -(j*j + i*i) / (2*sigma_sp*sigma_sp) );
+        }
+
+    //create empty image for filtered output dz = 1, rgb channel  = 1 (only gray); fill it with 0s.
+    CImg<float> filteredImg(dx,dy,1,1,0);
+
+    //zero pad the input image to accomodate filtering at the boundary
+    CImg<float> paddedImg(dx + 2 * filter_hw, dy + 2 * filter_hw, 1, 1, 0);
+
+    for(i = 0; i < dx; i++)
+        for(j = 0; j < dy; j++)
+            paddedImg(i+filter_hw, j+filter_hw) = grayImg(i,j);
+
+    float local_window[2*filter_hw + 1][2*filter_hw + 1];
+    float local_pixel = 0; //local window
+    float pd = 0; //photometric distance
+    float gaussian_ph = 0; //photometric filter coefficient
+    float gaussian_bl = 0; //bilateral filter coefficient
+    float filtered_pixel = 0; //filtered value of pixel
+    float normal_factor = 0; //total weight of the filter window used to normalize the filtered coefficient
+
+#ifdef USE_OMP
+	#pragma omp parallel shared(filteredImg, paddedImg, gaussian_sp)
+	{
+    #pragma omp for private(i,j,k,l,normal_factor,gaussian_ph, gaussian_bl, filtered_pixel,pd)
+#endif
+    for(i = filter_hw; i < dx + filter_hw ; i++)
+        for(j = filter_hw; j < dy + filter_hw; j++) {
+            filtered_pixel = 0;
+            normal_factor = 0;
+            for(k = -filter_hw ; k <= filter_hw ; k++)
+                for(l = -filter_hw ; l <= filter_hw ; l++) 
+                {
+                    local_pixel = paddedImg(i + k, j + l);
+                    //photometric distance = difference in pixel values (squared)
+                    pd = paddedImg(i,j) - local_pixel;
+                    pd = pd * pd;
+#ifndef NO_COMP
+                    gaussian_ph = exp( -(pd) / (2*sigma_ph*sigma_ph) );
+#endif
+                    gaussian_bl = gaussian_ph * gaussian_sp[k+filter_hw][l+filter_hw] ;
+                    filtered_pixel += gaussian_bl * local_pixel;
+                    normal_factor += gaussian_bl;
+                }
+
+            filtered_pixel = filtered_pixel / normal_factor;
+            filteredImg(i-filter_hw, j - filter_hw) =  filtered_pixel;
+        }
+#ifdef USE_OMP
+    }
+#endif
+    return filteredImg;
+}
+
+
+CImg<float>  blfilter_lpunroll_2dwindow(CImg<float> grayImg, int filter_hw, float sigma_sp, float sigma_ph)
+{
+    //image height and width
+    int dx = grayImg.width();
+    int dy = grayImg.height();
+    int i,j,k,l;
+    //gaussian kernel for the spatial distances
+    float gaussian_sp[2*filter_hw + 1][2*filter_hw + 1];
+    float sigmasq = (-1.0 / (2.0 * sigma_ph * sigma_ph));
+
+    for(int i = -filter_hw; i<= filter_hw ; i++)
+        for(int j = -filter_hw; j<= filter_hw; j++) {
+            gaussian_sp[i+filter_hw][j+filter_hw] = exp( -(j*j + i*i) / (2*sigma_sp*sigma_sp) );
+
+        }
+
+
+    //create empty image for filtered output dz = 1, rgb channel  = 1 (only gray); fill it with 0s.
+    CImg<float> filteredImg(dx,dy,1,1,0);
+
+    //zero pad the input image to accomodate filtering at the boundary
+    CImg<float> paddedImg(dx + 2 * filter_hw, dy + 2 * filter_hw, 1, 1, 0);
+
+    for(int i = 0; i < dx; i++)
+        for(int j = 0; j < dy; j++)
+            paddedImg(i+filter_hw, j+filter_hw) = grayImg(i,j);
+
+
+    
+
+    float normal_factor = 0; //total weight of the filter window used to normalize the filtered coefficient
+#ifdef USE_OMP
+	#pragma omp parallel shared(filteredImg, paddedImg, gaussian_sp)
+	{
+#endif
+    float local_window[2*filter_hw + 1][2*filter_hw + 1];
+
+    float local_pixel0 = 0; //local window
+    float local_pixel1 = 0;
+    float local_pixel2 = 0;
+    float local_pixel3 = 0;
+
+    float pd0 = 0; //photometric distance
+    float pd1 = 0;
+    float pd2 = 0;
+    float pd3 = 0;
+
+    float gaussian_ph0 = 0; //photometric filter coefficient
+    float gaussian_ph1 = 0;
+    float gaussian_ph2 = 0;
+    float gaussian_ph3 = 0;
+
+    float gaussian_bl0 = 0; //bilateral filter coefficient
+    float gaussian_bl1 = 0;
+    float gaussian_bl2 = 0;
+    float gaussian_bl3 = 0;
+
+    float filtered_pixel0 = 0; //filtered value of pixel
+    float filtered_pixel1 = 0;
+    float filtered_pixel2 = 0;
+    float filtered_pixel3 = 0;
+
+    float filtered_pixel = 0;
+#ifdef USE_OMP
+        #pragma omp for private(i,j,  k,l,normal_factor)
+#endif
+    for(i = filter_hw; i < dx + filter_hw ; i++)
+        for(j = filter_hw; j < dy + filter_hw; j++) {
+
+            filtered_pixel  = 0;
+            filtered_pixel0 = 0;
+            filtered_pixel1 = 0;
+            filtered_pixel2 = 0;
+            filtered_pixel3 = 0;
+
+            normal_factor = 0;
+
+            for(k = -filter_hw ; k <= filter_hw ; k+=2)
+                for(l = -filter_hw ; l <= filter_hw ; l+=2) {
+
+                    //local_window[k + filter_hw][l + filter_hw] = paddedImg(i + k, j + l);
+                    local_pixel0 = paddedImg(i + k, j + l);
+                    local_pixel1 = paddedImg(i + k, j + (l + 1));
+                    local_pixel2 = paddedImg(i + (k + 1), j + l);
+                    local_pixel3 = paddedImg(i + (k + 1), j + (l + 1));
+
+                    //photometric distance = difference in pixel values (squared)
+                    pd0 = paddedImg(i,j) - local_pixel0;
+                    pd0 = pd0 * pd0;
+                    pd1 = paddedImg(i,j) - local_pixel1;
+                    pd1 = pd1 * pd1;
+                    pd2 = paddedImg(i,j) - local_pixel2;
+                    pd2 = pd2 * pd2;
+                    pd3 = paddedImg(i,j) - local_pixel3;
+                    pd3 = pd3 * pd3;
+
+                    gaussian_ph0 = exp( pd0 * sigmasq );
+                    gaussian_bl0 = gaussian_ph0 * gaussian_sp[k+filter_hw][l+filter_hw] ;
+                    gaussian_ph1 = exp( pd1 * sigmasq );
+                    gaussian_bl1 = gaussian_ph1 * gaussian_sp[k+filter_hw][l+1+filter_hw] ;
+                    gaussian_ph2 = exp( pd2 * sigmasq );
+                    gaussian_bl2 = gaussian_ph2 * gaussian_sp[k+1+filter_hw][l+filter_hw] ;
+                    gaussian_ph3 = exp( pd3 * sigmasq );
+                    gaussian_bl3 = gaussian_ph3 * gaussian_sp[k+1+filter_hw][l+1+filter_hw] ;
+
+                    if(k == filter_hw) {
+                        gaussian_bl2 = 0;
+                        gaussian_bl3 = 0;
+                    }
+                    if(l == filter_hw) {
+                        gaussian_bl1 = 0;
+                        gaussian_bl3 = 0;
+                    }
+
+                    filtered_pixel0 += gaussian_bl0 * local_pixel0;
+                    filtered_pixel1 += gaussian_bl1 * local_pixel1;
+                    filtered_pixel2 += gaussian_bl2 * local_pixel2;
+                    filtered_pixel3 += gaussian_bl3 * local_pixel3;
+
+                    normal_factor += (gaussian_bl0 + gaussian_bl1 + gaussian_bl1 + gaussian_bl3);
+
+                }
+
+            filtered_pixel = (filtered_pixel0 + filtered_pixel1 + filtered_pixel1 + filtered_pixel3) / normal_factor;
+
+            filteredImg(i-filter_hw, j - filter_hw) =  filtered_pixel;
+
+
+        }
+#ifdef USE_OMP
+}
+#endif
+
+    return filteredImg;
+
+}
+
+
+CImg<float>  blfilter_lpunroll_linearwindow(CImg<float> grayImg, int filter_hw, float sigma_sp, float sigma_ph)
+{
+    //image height and width
+    int dx = grayImg.width();
+    int dy = grayImg.height();
+    int i,j,k,l,m;
+
+
+    //gaussian kernel for the spatial distances
+    float gaussian_sp[2*filter_hw + 1][2*filter_hw + 1];
+
+    for(int i = -filter_hw; i<= filter_hw ; i++)
+        for(int j = -filter_hw; j<= filter_hw; j++) {
+            gaussian_sp[i+filter_hw][j+filter_hw] = exp( -(j*j + i*i) / (2*sigma_sp*sigma_sp) );
+
+        }
+
+
+    //create empty image for filtered output dz = 1, rgb channel  = 1 (only gray); fill it with 0s.
+    CImg<float> filteredImg(dx,dy,1,1,0);
+
+    //zero pad the input image to accomodate filtering at the boundary
+    CImg<float> paddedImg(dx + 2 * filter_hw, dy + 2 * filter_hw, 1, 1, 0);
+
+    for(i = 0; i < dx; i++)
+        for(j = 0; j < dy; j++)
+            paddedImg(i+filter_hw, j+filter_hw) = grayImg(i,j);
+
+    float local_window[2*filter_hw + 1][2*filter_hw + 1];
+    float sigmasq = (-1.0 / (2.0 * sigma_ph * sigma_ph));
+
+
+    //linear gaussian window
+    int lwgcount = 0;
+    float linwindowg[(2*filter_hw+1)*(2*filter_hw+1)];
+    for(k = 0 ; k <= 2*filter_hw+1 ; k++)
+        for(l = -filter_hw ; l <= 2*filter_hw+1 ; l++)
+            linwindowg[lwgcount++] = gaussian_sp[k][l];
+
+#ifdef USE_OMP
+    #pragma omp parallel shared(filteredImg, paddedImg, gaussian_sp)
+    {
+#endif
+    float local_pixel0 = 0, local_pixel1 = 0, local_pixel2 = 0, local_pixel3 = 0;
+
+    float pd0 = 0, pd1 = 0, pd2 = 0, pd3 = 0;
+
+    float gaussian_ph0 = 0, gaussian_ph1 = 0, gaussian_ph2 = 0, gaussian_ph3 = 0;
+
+    float gaussian_bl0 = 0, gaussian_bl1 = 0, gaussian_bl2 = 0, gaussian_bl3 = 0;
+
+    float filtered_pixel0 = 0, filtered_pixel1 = 0, filtered_pixel2 = 0, filtered_pixel3 = 0, filtered_pixel = 0;
+
+    float normal_factor = 0; //total weight of the filter window used to normalize the filtered coefficient
+#ifdef USE_OMP
+    #pragma omp for private(i,j,k,m,normal_factor,gaussian_ph0, gaussian_ph1, gaussian_ph2, gaussian_ph3, gaussian_bl0, gaussian_bl1, gaussian_bl2, gaussian_bl3, filtered_pixel0, filtered_pixel1, filtered_pixel2, filtered_pixel3, pd0, pd1, pd2, pd3)
+#endif
+    for(i = filter_hw; i < dx + filter_hw ; i++)
+        for(j = filter_hw; j < dy + filter_hw; j++) {
+
+            filtered_pixel = 0;filtered_pixel0 = 0;filtered_pixel1 = 0;filtered_pixel2 = 0;filtered_pixel3 = 0;
+
+            normal_factor = 0;
+
+            int lwcount = 0;
+            float linwindow[(2*filter_hw+1)*(2*filter_hw+1)];
+            for(k = -filter_hw ; k <= filter_hw ; k++)
+                for(m = -filter_hw ; m <= filter_hw ; m++)
+                    linwindow[lwcount++] = paddedImg(i + k, j + m);
+
+         
+            for(int l = 0; l < lwcount ; l+= 4) 
+		{
+
+
+                local_pixel0 = linwindow[l]; local_pixel1 = linwindow[l + 1];local_pixel2 = linwindow[l + 2];local_pixel3 = linwindow[l + 3];
+
+                //photometric distance = difference in pixel values (squared)
+                pd0 = paddedImg(i,j) - local_pixel0;
+                pd0 = pd0 * pd0;
+                pd1 = paddedImg(i,j) - local_pixel1;
+                pd1 = pd1 * pd1;
+                pd2 = paddedImg(i,j) - local_pixel2;
+                pd2 = pd2 * pd2;
+                pd3 = paddedImg(i,j) - local_pixel3;
+                pd3 = pd3 * pd3;
+
+                gaussian_ph0 = exp( pd0 * sigmasq);
+                gaussian_bl0 = gaussian_ph0 * linwindowg[l] ;
+                gaussian_ph1 = exp( pd1 * sigmasq );
+                gaussian_bl1 = gaussian_ph1 * linwindowg[l+1] ;
+                gaussian_ph2 = exp( pd2 * sigmasq );
+                gaussian_bl2 = gaussian_ph2 * linwindowg[l+2] ;
+                gaussian_ph3 = exp(  pd3 * sigmasq );
+                gaussian_bl3 = gaussian_ph3 * linwindowg[l+3] ;
+
+               
+                if(l == lwcount) {
+                    gaussian_bl1 = 0;
+                    gaussian_bl2 = 0;
+                    gaussian_bl3 = 0;
+                    continue;
+                }
+                if(l == lwcount-1) {
+                    gaussian_bl2 = 0;
+                    gaussian_bl3 = 0;
+                    continue;
+                }
+                if(l == lwcount-2) {
+                    gaussian_bl3 = 0;
+                    continue;
+                }
+
+                filtered_pixel0 += gaussian_bl0 * local_pixel0;
+                filtered_pixel1 += gaussian_bl1 * local_pixel1;
+                filtered_pixel2 += gaussian_bl2 * local_pixel2;
+                filtered_pixel3 += gaussian_bl3 * local_pixel3;
+
+                normal_factor += (gaussian_bl0 + gaussian_bl1 + gaussian_bl1 + gaussian_bl3);
+
+            }
+
+            filtered_pixel = (filtered_pixel0 + filtered_pixel1 + filtered_pixel1 + filtered_pixel3) / normal_factor;
+            filteredImg(i-filter_hw, j - filter_hw) =  filtered_pixel;
+
+        }
+#ifdef USE_OMP
+}
+#endif
+
+    return filteredImg;
+
+}
+
+
+
 
 void *MyMalloc(int MemSize)
 {
