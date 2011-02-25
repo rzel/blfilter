@@ -2,13 +2,16 @@
  BUILD_PATH = bin
  VPATH = ../src
  LIB =  -lpthread -openmp -lX11 -lm
- #CC = /opt/intel/Compiler/11.1/073/bin/intel64/icpc
+ CC = /opt/intel/Compiler/11.1/073/bin/intel64/icpc
  CC = icpc
- FLAG = -xSSE3
- #FLAG =  -xSSE3 -O3 -L/opt/intel/compilerpro-12.0.1.107/compiler/lib/ia32 -I/opt/intel/compilerpro-12.0.1.107/compiler/include -opt-streaming-stores always 
+ #CC = g++
+ FLAG = -xSSE2 -O2
+ #FLAG = -m64 -O3 -fprefetch-loop-arrays -funroll-all-loops 
+ #FLAG =   -g  
+ #FLAG = -vec_report2 -mcmodel=medium
 
- #all: bNptD bNptF bNptFOMP bSSEa bSSEaR bSSEI bSSEIR bLlw bL2w 
- all: bfilter bfilterOMP bfilterTile bfilterTileOMP bfilterExpTile bfilterExpTileOMP
+ all: bSSEa bSSEaOMP bSSEaR bSSEaROMP bSSEI bSSEIOMP bSSEIR bSSEIROMP bfilterTile bfilterTileOMP bLlw bL2w bNptD bNptF bNptFOMP 
+ #all: bfilter bfilterOMP bfilterTile bfilterTileOMP bfilterExpTile bfilterExpTileOMP
 
 bNptD: $(SRC_PATH)/CImg.h $(SRC_PATH)/def.h
 	$(CC)  $(SRC_PATH)/blfilter_noopt_double.cpp -o $(BUILD_PATH)/$@ $(FLAG) $(LIB) 
@@ -25,14 +28,29 @@ bNptFOMP: $(SRC_PATH)/CImg.h $(SRC_PATH)/def.h
 bSSEa: $(SRC_PATH)/CImg.h $(SRC_PATH)/def.h
 	$(CC)  $(SRC_PATH)/blfilter_SSEassembly.cpp -o $(BUILD_PATH)/$@ $(FLAG) $(LIB) 
 
+bSSEaOMP: $(SRC_PATH)/CImg.h $(SRC_PATH)/def.h
+	$(CC)  $(SRC_PATH)/blfilter_SSEassembly.cpp -o $(BUILD_PATH)/$@ $(FLAG) $(LIB) -DUSE_OMP
+
 bSSEaR: $(SRC_PATH)/CImg.h $(SRC_PATH)/def.h
 	$(CC)  $(SRC_PATH)/blfilter_SSEassembly_reduction.cpp -o $(BUILD_PATH)/$@ $(FLAG) $(LIB) 
+
+bSSEaROMP: $(SRC_PATH)/CImg.h $(SRC_PATH)/def.h
+	$(CC)  $(SRC_PATH)/blfilter_SSEassembly_reduction.cpp -o $(BUILD_PATH)/$@ $(FLAG) $(LIB) -DUSE_OMP 
 
 bSSEI: $(SRC_PATH)/CImg.h $(SRC_PATH)/def.h
 	$(CC)  $(SRC_PATH)/blfilter_SSEintrin.cpp -o $(BUILD_PATH)/$@ $(FLAG) $(LIB) 
 
+bSSEIMI: $(SRC_PATH)/CImg.h $(SRC_PATH)/def.h
+	$(CC)  $(SRC_PATH)/blfilter_SSEintrin.cpp -o $(BUILD_PATH)/$@ $(FLAG) $(LIB) -DNO_COMP 
+
+bSSEIOMP: $(SRC_PATH)/CImg.h $(SRC_PATH)/def.h
+	$(CC)  $(SRC_PATH)/blfilter_SSEintrin.cpp -o $(BUILD_PATH)/$@ $(FLAG) $(LIB) -DUSE_OMP 
+
 bSSEIR: $(SRC_PATH)/CImg.h $(SRC_PATH)/def.h
 	$(CC)  $(SRC_PATH)/blfilter_SSEintrin_reduction.cpp -o $(BUILD_PATH)/$@ $(FLAG) $(LIB) 
+
+bSSEIROMP: $(SRC_PATH)/CImg.h $(SRC_PATH)/def.h
+	$(CC)  $(SRC_PATH)/blfilter_SSEintrin_reduction.cpp -o $(BUILD_PATH)/$@ $(FLAG) $(LIB) -DUSE_OMP 
 
 bLlw: $(SRC_PATH)/CImg.h $(SRC_PATH)/def.h
 	$(CC)  $(SRC_PATH)/blfilter_lpunroll_linearwindow.cpp -o $(BUILD_PATH)/$@ $(FLAG) $(LIB) 
