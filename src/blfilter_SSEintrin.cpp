@@ -148,7 +148,7 @@ int main(int argc, char* argv[])
 	}
 	
 	start = my_difftime();
-	filteredImg = blfilter_SSEintrin(grayImg, filter_hw, sigma_sp, sigma_ph);
+    filteredImg = blfilter_SSEintrin(grayImg, filter_hw, sigma_sp, sigma_ph);
 	end = my_difftime();
 	elapsed = end - start;
 	printf("%f, ", elapsed);
@@ -858,7 +858,8 @@ CImg<float>  blfilter_noopt(CImg<float> grayImg, int filter_hw, float sigma_sp, 
 #ifdef USE_OMP
 	#pragma omp parallel shared(filteredImg, paddedImg, gaussian_sp)
 	{
-    #pragma omp for private(i,j,k,l,normal_factor,gaussian_ph, gaussian_bl, filtered_pixel,pd)
+    //#pragma omp for private(i,j,k,l,normal_factor,gaussian_ph, gaussian_bl, filtered_pixel,pd)
+	#pragma omp for private(i, j, k, l, filtered_pixel, normal_factor, local_pixel, pd, gaussian_ph, gaussian_bl)
 #endif
     for(i = filter_hw; i < dx + filter_hw ; i++)
         for(j = filter_hw; j < dy + filter_hw; j++) {
