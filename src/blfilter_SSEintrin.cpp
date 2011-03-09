@@ -778,7 +778,7 @@ CImg<float> blfilter_Tiles(CImg<float> grayImg, int filter_hw, float sigma_sp, f
 #ifdef USE_OMP
 #pragma omp parallel shared(paddedImg, filteredImg, gaussian_sp, Rows, Cols, TileSize, filter_hw, sigma_ph)
     {
-#pragma omp for private( tiles, filter_current_pixel,i,j,k,l,normal_factor,gaussian_ph, gaussian_bl, filtered_pixel,pd)
+#pragma omp for private( tiles, filter_current_pixel,i,j,k,l,pixel_value, normal_factor,gaussian_ph, gaussian_bl, filtered_pixel,pd)
 #endif
         for( tiles = 0; tiles < numTiles; tiles++)
         {
