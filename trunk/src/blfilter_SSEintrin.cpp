@@ -67,8 +67,8 @@ int main(int argc, char* argv[])
 	else
 		grayImg = image;
 	
-	
 	double start, end, elapsed;
+	
     //printf("No optimization\n");
 	start = my_difftime();
 	CImg<float> filteredImg = blfilter_noopt(grayImg, filter_hw, sigma_sp, sigma_ph);
@@ -90,7 +90,7 @@ int main(int argc, char* argv[])
 
     //printf("Tiles \n");
 	start = my_difftime();
-	filteredImg = blfilter_Tiles(grayImg, filter_hw, sigma_sp, sigma_ph, TileSize);
+    filteredImg = blfilter_Tiles(grayImg, filter_hw, sigma_sp, sigma_ph, TileSize);
 	end = my_difftime();
 	elapsed = end - start;
 	printf("%f, ", elapsed);
