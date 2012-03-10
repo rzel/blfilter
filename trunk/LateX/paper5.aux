@@ -1,0 +1,157 @@
+\relax 
+\citation{landscapeofpc}
+\citation{Tomasi1998}
+\citation{zhang2008}
+\citation{eisemann2004}
+\citation{Bae2006}
+\citation{DeCarlo2002}
+\citation{Xiao2006}
+\citation{Ramanath2003}
+\citation{Paris2009}
+\citation{Pham2005}
+\citation{yang2009}
+\@writefile{toc}{\contentsline {section}{\numberline {I}Introduction}{1}}
+\newlabel{sec:intro}{{I}{1}}
+\citation{Tomasi1998}
+\@writefile{toc}{\contentsline {section}{\numberline {II}Bilateral Filtering Kernel}{2}}
+\newlabel{sec:stencil}{{II}{2}}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Example of a filter at the starting position of the image}}{2}}
+\newlabel{fig:filter}{{1}{2}}
+\newlabel{spatial}{{1}{2}}
+\newlabel{photometric}{{3}{2}}
+\newlabel{combined}{{5}{2}}
+\newlabel{eq:depen}{{7}{2}}
+\citation{Paris2009,Pham2005}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Example of a naive Bilateral filter iterations}}{3}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\unhbox \voidb@x \hbox {II-A}}A Naive Approach to Bilateral filetering Processing}{3}}
+\newlabel{alg:Example-Algorithm-float}{{1}{3}}
+\@writefile{loa}{\contentsline {algorithm}{\numberline {1}{\ignorespaces Naive Stencil Kernel Algorithm}}{3}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\unhbox \voidb@x \hbox {II-B}}Pair-symmetric Bilateral kernel Processing}{3}}
+\newlabel{alg:Example-Algorithm-float-1}{{2}{3}}
+\@writefile{loa}{\contentsline {algorithm}{\numberline {2}{\ignorespaces Pair-symmetric Bilateral Filtering Algorithm}}{3}}
+\@writefile{toc}{\contentsline {section}{\numberline {III}CUDA-based Implementation Details}{3}}
+\newlabel{sec:GPUoptimizations}{{III}{3}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\unhbox \voidb@x \hbox {III-A}}Implicit Intra-Warp Synchronization and Memory Access Patterns}{4}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Illustration of CUDA implementation of pair-symmetric processing}}{4}}
+\newlabel{fig:pspro}{{3}{4}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\unhbox \voidb@x \hbox {III-B}}Shared Memory and Tile Processing}{4}}
+\citation{Tomasi1998}
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Tiling for Pair-Symmetric Stencil Processing with each tile having a unique color and overlapping tiles have a resultant color that results from mixing colors of overlapping tiles. The pair-symmetric thread access pattern ensures exclusive memory writes.}}{5}}
+\newlabel{fig:Tiling-for-Pair-Symmetric}{{4}{5}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Input image after one iteration of pair-symmetric algorithm. Tiles do not have perfect boundaries due to overlaps.}}{5}}
+\newlabel{fig:An-iteration-of}{{5}{5}}
+\@writefile{toc}{\contentsline {section}{\numberline {IV}CPU-based Implementation Details}{5}}
+\newlabel{sec:optimizations}{{IV}{5}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\unhbox \voidb@x \hbox {IV-A}}Memory to computation ratio of Bilateral filtering kernel}{5}}
+\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Percentage of time taken by sequential kernel when run without $exp$ instruction, $filter$ $radius$=10.}}{5}}
+\newlabel{fig:noexp}{{6}{5}}
+\citation{kdatta2008}
+\citation{matrix-multi,MatrixMultiFloating}
+\citation{NCCmatching}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\unhbox \voidb@x \hbox {IV-B}}SIMD optimizations}{6}}
+\newlabel{sub:SIMD1}{{\unhbox \voidb@x \hbox {IV-B}}{6}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\unhbox \voidb@x \hbox {IV-C}}Reduction Methods}{6}}
+\newlabel{sub:reduction}{{\unhbox \voidb@x \hbox {IV-C}}{6}}
+\@writefile{toc}{\contentsline {section}{\numberline {V}Experimental Testbed}{6}}
+\newlabel{sec:expt}{{V}{6}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\unhbox \voidb@x \hbox {V-A}}Hardware}{6}}
+\newlabel{subsec:hw}{{\unhbox \voidb@x \hbox {V-A}}{6}}
+\newlabel{ss:xeon}{{\unhbox \voidb@x \hbox {V-A}1}{6}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {\unhbox \voidb@x \hbox {V-A}1}Intel Xeon}{6}}
+\newlabel{ss:opteron}{{\unhbox \voidb@x \hbox {V-A}2}{6}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {\unhbox \voidb@x \hbox {V-A}2}AMD Opteron}{6}}
+\newlabel{ss:corei7}{{\unhbox \voidb@x \hbox {V-A}3}{6}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {\unhbox \voidb@x \hbox {V-A}3}Intel Core i7}{6}}
+\newlabel{ss:phenom}{{\unhbox \voidb@x \hbox {V-A}4}{6}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {\unhbox \voidb@x \hbox {V-A}4}AMD Phenom II}{6}}
+\citation{Tomasi1998}
+\@writefile{lot}{\contentsline {table}{\numberline {I}{\ignorespaces Architectural details of multicore chips employed for experiments}}{7}}
+\newlabel{tab:archs}{{I}{7}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {\unhbox \voidb@x \hbox {V-A}5}NVidia GeForce GTX 280}{7}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\unhbox \voidb@x \hbox {V-B}}Software Framework}{7}}
+\newlabel{subsec:sw}{{\unhbox \voidb@x \hbox {V-B}}{7}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {\unhbox \voidb@x \hbox {V-B}1}Algorithm variations on multicore architectures}{7}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {\unhbox \voidb@x \hbox {V-B}2}Input Image}{7}}
+\@writefile{toc}{\contentsline {section}{\numberline {VI}Performance Results}{7}}
+\newlabel{sec:results}{{VI}{7}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\unhbox \voidb@x \hbox {VI-A}}Performance of Bilateral filtering kernel on CPU}{7}}
+\newlabel{fig:Nehalem}{{7(a)}{8}}
+\newlabel{sub@fig:Nehalem}{{(a)}{8}}
+\newlabel{fig:harpertown}{{7(b)}{8}}
+\newlabel{sub@fig:harpertown}{{(b)}{8}}
+\newlabel{fig:corei7}{{7(c)}{8}}
+\newlabel{sub@fig:corei7}{{(c)}{8}}
+\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces Bilateral filtering kernel on Intel chips. The baseline version is BL\_Naive version, auto optimized by compiler with O3 and SSE flags.}}{8}}
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(a)}{\ignorespaces {Nehalem-EX Xeon X7650}}}{8}}
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(b)}{\ignorespaces {Harpertown Xeon E5410}}}{8}}
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(c)}{\ignorespaces {Core i7 - 870}}}{8}}
+\newlabel{fig:comparisonIntel}{{7}{8}}
+\newlabel{fig:barcelona}{{8(a)}{8}}
+\newlabel{sub@fig:barcelona}{{(a)}{8}}
+\newlabel{fig:Shanghai}{{8(b)}{8}}
+\newlabel{sub@fig:Shanghai}{{(b)}{8}}
+\newlabel{fig:Phenom}{{8(c)}{8}}
+\newlabel{sub@fig:Phenom}{{(c)}{8}}
+\@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces Bilateral filtering kernel on AMD chips. The comparison is with BL\_Naive version, auto optimized by compiler with O3 and SSE flags.}}{8}}
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(a)}{\ignorespaces {Barcelona AMD Opteron 8350}}}{8}}
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(b)}{\ignorespaces {Shanghai AMD Opteron 2376}}}{8}}
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(c)}{\ignorespaces {AMD Phenom II 1045T}}}{8}}
+\newlabel{fig:comparisonAMD}{{8}{8}}
+\newlabel{fig:harpertownFinal}{{9(a)}{8}}
+\newlabel{sub@fig:harpertownFinal}{{(a)}{8}}
+\newlabel{fig:corei7Final}{{9(b)}{8}}
+\newlabel{sub@fig:corei7Final}{{(b)}{8}}
+\newlabel{fig:NehalemFinal}{{9(c)}{8}}
+\newlabel{sub@fig:NehalemFinal}{{(c)}{8}}
+\@writefile{lof}{\contentsline {figure}{\numberline {9}{\ignorespaces Comparison of combined speedup due to SIMDization and OpenMP parallelization on Intel chips for different algorithms}}{8}}
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(a)}{\ignorespaces {Harpertown Xeon E5410}}}{8}}
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(b)}{\ignorespaces {Core i7 - 870}}}{8}}
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(c)}{\ignorespaces {Nehalem-EX Xeon X7650}}}{8}}
+\newlabel{fig:comparisonFinalIntel}{{9}{8}}
+\bibstyle{IEEEtran}
+\bibdata{paper}
+\bibcite{landscapeofpc}{1}
+\bibcite{Tomasi1998}{2}
+\bibcite{zhang2008}{3}
+\bibcite{eisemann2004}{4}
+\bibcite{Bae2006}{5}
+\newlabel{fig:barcelonaFinal}{{10(a)}{9}}
+\newlabel{sub@fig:barcelonaFinal}{{(a)}{9}}
+\newlabel{fig:ShanghaiFinal}{{10(b)}{9}}
+\newlabel{sub@fig:ShanghaiFinal}{{(b)}{9}}
+\newlabel{fig:PhenomFinal}{{10(c)}{9}}
+\newlabel{sub@fig:PhenomFinal}{{(c)}{9}}
+\@writefile{lof}{\contentsline {figure}{\numberline {10}{\ignorespaces Comparison of combined speedup due to SIMDization and OpenMP parallelization on AMD chips for different algorithms.}}{9}}
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(a)}{\ignorespaces {Barcelona AMD Opteron 8350}}}{9}}
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(b)}{\ignorespaces {Shanghai AMD Opteron 2376}}}{9}}
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(c)}{\ignorespaces {AMD Phenom II 1045T}}}{9}}
+\newlabel{fig:comparisonFinalAMD}{{10}{9}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\unhbox \voidb@x \hbox {VI-B}}Performance of Bilateral filtering kernel on GPU}{9}}
+\@writefile{toc}{\contentsline {section}{\numberline {VII}Conclusion and future work}{9}}
+\newlabel{sec:conclusion}{{VII}{9}}
+\@writefile{toc}{\contentsline {section}{References}{9}}
+\bibcite{DeCarlo2002}{6}
+\bibcite{Xiao2006}{7}
+\bibcite{Ramanath2003}{8}
+\bibcite{Paris2009}{9}
+\bibcite{Pham2005}{10}
+\bibcite{yang2009}{11}
+\bibcite{kdatta2008}{12}
+\bibcite{matrix-multi}{13}
+\bibcite{MatrixMultiFloating}{14}
+\bibcite{NCCmatching}{15}
+\bibcite{MMX}{16}
+\newlabel{fig:hw10}{{11(a)}{10}}
+\newlabel{sub@fig:hw10}{{(a)}{10}}
+\newlabel{fig:hw5}{{11(b)}{10}}
+\newlabel{sub@fig:hw5}{{(b)}{10}}
+\newlabel{fig:hw10light}{{11(c)}{10}}
+\newlabel{sub@fig:hw10light}{{(c)}{10}}
+\newlabel{fig:hw5light}{{11(d)}{10}}
+\newlabel{sub@fig:hw5light}{{(d)}{10}}
+\@writefile{lof}{\contentsline {figure}{\numberline {11}{\ignorespaces Performance of Naive and pair-symmetric (P.S.) Bilateral filtering kernel algorithms on GTX 280 NVidia card for both smaller image and larger image.}}{10}}
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(a)}{\ignorespaces {Large Image, Filter Width = $10$}}}{10}}
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(b)}{\ignorespaces {Large Image, Filter Width = $5$}}}{10}}
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(c)}{\ignorespaces {Smaller Image, Filter Width = $10$}}}{10}}
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(d)}{\ignorespaces {Smaller Image, Filter Width = $5$}}}{10}}
+\newlabel{fig:gpuresults}{{11}{10}}
