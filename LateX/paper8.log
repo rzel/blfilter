@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.3-1.40.12 (MiKTeX 2.9) (preloaded format=pdflatex 2011.11.27)  10 MAR 2012 03:15
+This is pdfTeX, Version 3.1415926-2.3-1.40.12 (MiKTeX 2.9) (preloaded format=pdflatex 2011.11.27)  11 MAR 2012 01:44
 entering extended mode
 **C:/Users/dinwal/Dropbox/Public/blfilter/LateX/paper8.tex
 (C:/Users/dinwal/Dropbox/Public/blfilter/LateX/paper8.tex
@@ -703,49 +703,53 @@ File: tikzlibraryplotmarks.code.tex 2008/01/09 v2.10 (rcs-revision 1.1)
 ("C:\Program Files (x86)\MiKTeX 2.9\tex\generic\pgf\libraries\pgflibraryplotmar
 ks.code.tex"
 File: pgflibraryplotmarks.code.tex 2010/10/15 v2.10 (rcs-revision 1.12)
-))) ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\ltxmisc\url.sty"
+)))
+(C:\Users\dinwal\AppData\Roaming\MiKTeX\2.9\tex\latex\wrapfig\wrapfig.sty
+\wrapoverhang=\dimen196
+\WF@size=\dimen197
+\c@WF@wrappedlines=\count146
+\WF@box=\box41
+\WF@everypar=\toks42
+Package: wrapfig 2003/01/31  v 3.6
+)
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\ltxmisc\url.sty"
 \Urlmuskip=\muskip11
 Package: url 2006/04/12  ver 3.3  Verb mode for urls, etc.
-) (C:\Users\dinwal\Dropbox\Public\blfilter\LateX\paper8.aux
-
-LaTeX Warning: Label `fig:pspro' multiply defined.
-
-
-LaTeX Warning: Label `fig:pspro' multiply defined.
-
 )
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 23.
-LaTeX Font Info:    ... okay on input line 23.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 23.
-LaTeX Font Info:    ... okay on input line 23.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 23.
-LaTeX Font Info:    ... okay on input line 23.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 23.
-LaTeX Font Info:    ... okay on input line 23.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 23.
-LaTeX Font Info:    ... okay on input line 23.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 23.
-LaTeX Font Info:    ... okay on input line 23.
- ("C:\Program Files (x86)\MiKTeX 2.9\tex\context\base\supp-pdf.mkii"
+(C:\Users\dinwal\Dropbox\Public\blfilter\LateX\paper8.aux)
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 24.
+LaTeX Font Info:    ... okay on input line 24.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 24.
+LaTeX Font Info:    ... okay on input line 24.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 24.
+LaTeX Font Info:    ... okay on input line 24.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 24.
+LaTeX Font Info:    ... okay on input line 24.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 24.
+LaTeX Font Info:    ... okay on input line 24.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 24.
+LaTeX Font Info:    ... okay on input line 24.
+
+("C:\Program Files (x86)\MiKTeX 2.9\tex\context\base\supp-pdf.mkii"
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count146
-\scratchdimen=\dimen196
-\scratchbox=\box41
-\nofMPsegments=\count147
-\nofMParguments=\count148
-\everyMPshowfont=\toks42
-\MPscratchCnt=\count149
-\MPscratchDim=\dimen197
-\MPnumerator=\count150
-\makeMPintoPDFobject=\count151
-\everyMPtoPDFconversion=\toks43
+\scratchcounter=\count147
+\scratchdimen=\dimen198
+\scratchbox=\box42
+\nofMPsegments=\count148
+\nofMParguments=\count149
+\everyMPshowfont=\toks43
+\MPscratchCnt=\count150
+\MPscratchDim=\dimen199
+\MPnumerator=\count151
+\makeMPintoPDFobject=\count152
+\everyMPtoPDFconversion=\toks44
 ) ABD: EveryShipout initializing macros
-LaTeX Font Info:    Try loading font information for U+msa on input line 45.
+LaTeX Font Info:    Try loading font information for U+msa on input line 46.
 
 ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\amsfonts\umsa.fd"
 File: umsa.fd 2009/06/22 v3.00 AMS symbols A
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 45.
+LaTeX Font Info:    Try loading font information for U+msb on input line 46.
 
 ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\amsfonts\umsb.fd"
 File: umsb.fd 2009/06/22 v3.00 AMS symbols B
@@ -753,7 +757,7 @@ File: umsb.fd 2009/06/22 v3.00 AMS symbols B
 <images/filter.png, id=4, 302.12875pt x 140.525pt>
 File: images/filter.png Graphic file (type png)
  <use images/filter.png>
-Package pdftex.def Info: images/filter.png used on input line 60.
+Package pdftex.def Info: images/filter.png used on input line 61.
 (pdftex.def)             Requested size: 231.26378pt x 107.56558pt.
 
 
@@ -763,36 +767,36 @@ LaTeX Warning: `!h' float specifier changed to `!ht'.
 
 
 ]
-Underfull \hbox (badness 10000) in paragraph at lines 69--70
+Underfull \hbox (badness 10000) in paragraph at lines 70--71
 
  []
 
 <images/the1.png, id=16, 169.63374pt x 137.51375pt>
 File: images/the1.png Graphic file (type png)
  <use images/the1.png>
-Package pdftex.def Info: images/the1.png used on input line 121.
+Package pdftex.def Info: images/the1.png used on input line 122.
 (pdftex.def)             Requested size: 59.3727pt x 48.13052pt.
 
 <images/the202.png, id=18, 169.63374pt x 137.51375pt>
 File: images/the202.png Graphic file (type png)
  <use images/the202.png>
-Package pdftex.def Info: images/the202.png used on input line 122.
+Package pdftex.def Info: images/the202.png used on input line 123.
 (pdftex.def)             Requested size: 59.3727pt x 48.13052pt.
 
 <images/the2.png, id=20, 169.63374pt x 137.51375pt>
 File: images/the2.png Graphic file (type png)
  <use images/the2.png>
-Package pdftex.def Info: images/the2.png used on input line 122.
+Package pdftex.def Info: images/the2.png used on input line 123.
 (pdftex.def)             Requested size: 59.3727pt x 48.13052pt.
 
 <images/the3.png, id=21, 169.63374pt x 137.51375pt>
 File: images/the3.png Graphic file (type png)
  <use images/the3.png>
-Package pdftex.def Info: images/the3.png used on input line 122.
+Package pdftex.def Info: images/the3.png used on input line 123.
 (pdftex.def)             Requested size: 59.3727pt x 48.13052pt.
 
 [2 <C:/Users/dinwal/Dropbox/Public/blfilter/LateX/images/filter.png>]
-Underfull \hbox (badness 1838) in paragraph at lines 293--294
+Underfull \hbox (badness 1838) in paragraph at lines 205--206
 \OT1/ptm/m/n/10 pair-symmetric al-go-rithm would suf-fer sig-nif-i-cantly over
  []
 
@@ -800,308 +804,340 @@ Underfull \hbox (badness 1838) in paragraph at lines 293--294
 dinwal/Dropbox/Public/blfilter/LateX/images/the1.png> <C:/Users/dinwal/Dropbox/
 Public/blfilter/LateX/images/the2.png> <C:/Users/dinwal/Dropbox/Public/blfilter
 /LateX/images/the3.png>]
+<images/project24.pdf, id=39, 480.79625pt x 242.1547pt>
+File: images/project24.pdf Graphic file (type pdf)
 
-LaTeX Warning: File `images/project24.pdf' not found on input line 307.
+<use images/project24.pdf>
+Package pdftex.def Info: images/project24.pdf used on input line 221.
+(pdftex.def)             Requested size: 247.6778pt x 124.74615pt.
 
+<images/tiles19.pdf, id=40, 3404.78029pt x 1164.38014pt>
+File: images/tiles19.pdf Graphic file (type pdf)
 
-! Package pdftex.def Error: File `images/project24.pdf' not found.
+<use images/tiles19.pdf>
+Package pdftex.def Info: images/tiles19.pdf used on input line 223.
+(pdftex.def)             Requested size: 247.6778pt x 84.69522pt.
 
-See the pdftex.def package documentation for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.307 ... 0.48 \columnwidth]{images/project24.pdf}
-                                                  
-? r
-OK, entering \nonstopmode...
-LaTeX Font Info:    Try loading font information for OT1+pcr on input line 307.
+<images/smallfaces.pdf, id=41, 3478.9975pt x 1875.01505pt>
+File: images/smallfaces.pdf Graphic file (type pdf)
 
-("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\psnfss\ot1pcr.fd"
-File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
-)
+<use images/smallfaces.pdf>
+Package pdftex.def Info: images/smallfaces.pdf used on input line 224.
+(pdftex.def)             Requested size: 247.6778pt x 133.46745pt.
 
-LaTeX Warning: File `images/tiles19.pdf' not found on input line 313.
-
-
-! Package pdftex.def Error: File `images/tiles19.pdf' not found.
-
-See the pdftex.def package documentation for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.313 ...= 0.48  \columnwidth]{images/tiles19.pdf}
-                                                  
-Using draft setting for this image.
-Try typing  <return>  to proceed.
-If that doesn't work, type  X <return>  to quit.
+Underfull \hbox (badness 10000) in paragraph at lines 221--226
+[][][]
+ []
 
 
-LaTeX Warning: File `images/smallfaces.pdf' not found on input line 319.
+Underfull \hbox (badness 10000) in paragraph at lines 221--226
+[][]
+ []
 
-
-! Package pdftex.def Error: File `images/smallfaces.pdf' not found.
-
-See the pdftex.def package documentation for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.319 ....48  \columnwidth]{images/smallfaces.pdf}
-                                                  
-Using draft setting for this image.
-Try typing  <return>  to proceed.
-If that doesn't work, type  X <return>  to quit.
-
-[4] <images/stackedtiles.jpg, id=43, 994.71625pt x 979.66pt>
+[4 <C:/Users/dinwal/Dropbox/Public/blfilter/LateX/images/project24.pdf> <C:/Use
+rs/dinwal/Dropbox/Public/blfilter/LateX/images/tiles19.pdf> <C:/Users/dinwal/Dr
+opbox/Public/blfilter/LateX/images/smallfaces.pdf>]
+<images/stackedtiles.jpg, id=147, 89.6148pt x 81.6651pt>
 File: images/stackedtiles.jpg Graphic file (type jpg)
 
 <use images/stackedtiles.jpg>
-Package pdftex.def Info: images/stackedtiles.jpg used on input line 329.
-(pdftex.def)             Requested size: 247.6778pt x 243.92781pt.
+Package pdftex.def Info: images/stackedtiles.jpg used on input line 238.
+(pdftex.def)             Requested size: 123.84283pt x 112.86243pt.
 
-<images/lenatiles.png, id=44, 538.01pt x 492.84125pt>
+Underfull \hbox (badness 10000) in paragraph at lines 235--242
+[]\OT1/ptm/m/n/10 Figure 4[] il-lus-trates how tiles are pro-cessed
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 235--242
+\OT1/ptm/m/n/10 in par-al-lel with-out ex-plicit mu-tual ex-clu-sion.
+ []
+
+
+Underfull \hbox (badness 3872) in paragraph at lines 242--245
+[]\OT1/ptm/m/n/10 In tile based al-go-rithm,
+ []
+
+
+Underfull \hbox (badness 1975) in paragraph at lines 242--245
+\OT1/ptm/m/n/10 equal sized par-ti-tions of
+ []
+
+
+Underfull \hbox (badness 3019) in paragraph at lines 242--245
+\OT1/ptm/m/n/10 the in-put data are pro-
+ []
+
+<images/lenatiles.png, id=148, 538.01pt x 492.84125pt>
 File: images/lenatiles.png Graphic file (type png)
 
 <use images/lenatiles.png>
-Package pdftex.def Info: images/lenatiles.png used on input line 335.
-(pdftex.def)             Requested size: 247.6778pt x 226.88268pt.
+Package pdftex.def Info: images/lenatiles.png used on input line 247.
+(pdftex.def)             Requested size: 123.84283pt x 113.44133pt.
 
-<images/noexplarge.png, id=45, 429.7656pt x 267.8808pt>
+Underfull \hbox (badness 3291) in paragraph at lines 251--252
+[][]\OT1/ptm/m/n/10 If pro-cesses were as-
+ []
+
+
+Underfull \hbox (badness 3088) in paragraph at lines 251--252
+\OT1/ptm/m/n/10 signed to ad-ja-cent tiles,
+ []
+
+
+Underfull \hbox (badness 1394) in paragraph at lines 251--252
+\OT1/ptm/m/n/10 each other due to in-ter-
+ []
+
+
+Underfull \hbox (badness 5622) in paragraph at lines 251--252
+\OT1/ptm/m/n/10 this prob-lem, si-mul-ta-ne-
+ []
+
+<images/noexplarge.png, id=149, 429.7656pt x 267.8808pt>
 File: images/noexplarge.png Graphic file (type png)
 
 <use images/noexplarge.png>
-Package pdftex.def Info: images/noexplarge.png used on input line 348.
+Package pdftex.def Info: images/noexplarge.png used on input line 259.
 (pdftex.def)             Requested size: 247.6778pt x 154.38586pt.
 
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-[5 <C:/Users/dinwal/Dropbox/Public/blfilter/LateX/images/stackedtiles.jpg> <C:/
-Users/dinwal/Dropbox/Public/blfilter/LateX/images/lenatiles.png> <C:/Users/dinw
-al/Dropbox/Public/blfilter/LateX/images/noexplarge.png>]
-Underfull \hbox (badness 10000) in paragraph at lines 382--382
+
+Underfull \hbox (badness 10000) in paragraph at lines 274--274
 []|\OT1/ptm/b/n/8 cores
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 382--382
+Underfull \hbox (badness 10000) in paragraph at lines 274--274
 \OT1/ptm/b/n/8 per
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 382--382
+Underfull \hbox (badness 10000) in paragraph at lines 274--274
 []|\OT1/ptm/b/n/8 chips
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 382--382
+Underfull \hbox (badness 10000) in paragraph at lines 274--274
 \OT1/ptm/b/n/8 per
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 382--382
+Underfull \hbox (badness 10000) in paragraph at lines 274--274
 []|\OT1/ptm/b/n/8 cores
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 382--382
+Underfull \hbox (badness 10000) in paragraph at lines 274--274
 \OT1/ptm/b/n/8 per
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 396--396
+Underfull \hbox (badness 10000) in paragraph at lines 288--288
 []|\OT1/ptm/m/n/8 1296
  []
-
-[6]
-Underfull \hbox (badness 10000) in paragraph at lines 435--436
-[]$\OML/cmm/m/it/10 BL[]I[]Reduction$ \OT1/ptm/m/n/10 is the ex-tended ver-sion
- of
- []
-
-[7] <images/nehalem.png, id=60, 380.622pt x 218.7372pt>
-File: images/nehalem.png Graphic file (type png)
-
-<use images/nehalem.png>
-Package pdftex.def Info: images/nehalem.png used on input line 453.
-(pdftex.def)             Requested size: 154.80157pt x 88.96188pt.
- <images/harpertown.png, id=61, 380.622pt x 219.219pt>
-File: images/harpertown.png Graphic file (type png)
-
-<use images/harpertown.png>
-Package pdftex.def Info: images/harpertown.png used on input line 454.
-(pdftex.def)             Requested size: 154.80157pt x 89.15784pt.
- <images/corei7.png, id=62, 380.622pt x 219.219pt>
-File: images/corei7.png Graphic file (type png)
-
-<use images/corei7.png>
-Package pdftex.def Info: images/corei7.png used on input line 455.
-(pdftex.def)             Requested size: 154.80157pt x 89.15784pt.
- <images/barcelona.png, id=63, 380.622pt x 218.7372pt>
-File: images/barcelona.png Graphic file (type png)
-
-<use images/barcelona.png>
-Package pdftex.def Info: images/barcelona.png used on input line 463.
-(pdftex.def)             Requested size: 154.80157pt x 88.96188pt.
-
-<images/shanghai.png, id=64, 380.622pt x 218.7372pt>
-File: images/shanghai.png Graphic file (type png)
- <use images/shanghai.png>
-Package pdftex.def Info: images/shanghai.png used on input line 464.
-(pdftex.def)             Requested size: 154.80157pt x 88.96188pt.
-
-<images/phenom.png, id=65, 378.6948pt x 219.7008pt>
-File: images/phenom.png Graphic file (type png)
- <use images/phenom.png>
-Package pdftex.def Info: images/phenom.png used on input line 465.
-(pdftex.def)             Requested size: 154.80157pt x 89.80971pt.
-
-<images/harpertownfinal.png, id=66, 453.8556pt x 312.6882pt>
-File: images/harpertownfinal.png Graphic file (type png)
-
-<use images/harpertownfinal.png>
-Package pdftex.def Info: images/harpertownfinal.png used on input line 473.
-(pdftex.def)             Requested size: 165.12378pt x 113.76523pt.
-
-<images/corei7final.png, id=67, 450.9648pt x 313.6518pt>
-File: images/corei7final.png Graphic file (type png)
-
-<use images/corei7final.png>
-Package pdftex.def Info: images/corei7final.png used on input line 474.
-(pdftex.def)             Requested size: 165.12378pt x 114.84807pt.
-
-<images/nehalemfinal.png, id=68, 454.8192pt x 318.4698pt>
-File: images/nehalemfinal.png Graphic file (type png)
-
-<use images/nehalemfinal.png>
-Package pdftex.def Info: images/nehalemfinal.png used on input line 475.
-(pdftex.def)             Requested size: 165.12378pt x 115.62093pt.
-
-Overfull \hbox (4.97162pt too wide) in paragraph at lines 473--477
-[][] [] []
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 473--477
-
- []
-
-<images/barcelonafinal.png, id=69, 452.892pt x 313.6518pt>
-File: images/barcelonafinal.png Graphic file (type png)
-
-<use images/barcelonafinal.png>
-Package pdftex.def Info: images/barcelonafinal.png used on input line 483.
-(pdftex.def)             Requested size: 154.80157pt x 107.20493pt.
-
-<images/shanghaifinal.png, id=70, 452.892pt x 314.6154pt>
-File: images/shanghaifinal.png Graphic file (type png)
-
-<use images/shanghaifinal.png>
-Package pdftex.def Info: images/shanghaifinal.png used on input line 484.
-(pdftex.def)             Requested size: 154.80157pt x 107.53429pt.
-
-<images/phenomfinal.png, id=71, 449.5194pt x 313.6518pt>
-File: images/phenomfinal.png Graphic file (type png)
-
-<use images/phenomfinal.png>
-Package pdftex.def Info: images/phenomfinal.png used on input line 485.
-(pdftex.def)             Requested size: 154.80157pt x 108.00897pt.
- [8]
-Underfull \vbox (badness 2717) has occurred while \output is active []
 
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [9 <C:/Users/dinwal/Dropbox/Public/blfilter/LateX/images/nehalem.png> <C:/User
+ [5 <C:/Users/dinwal/Dropbox/Public/blfilter/LateX/images/stackedtiles.jpg> <C:
+/Users/dinwal/Dropbox/Public/blfilter/LateX/images/lenatiles.png> <C:/Users/din
+wal/Dropbox/Public/blfilter/LateX/images/noexplarge.png>]
+<images/nehalem.png, id=156, 380.622pt x 218.7372pt>
+File: images/nehalem.png Graphic file (type png)
+ <use images/nehalem.png>
+Package pdftex.def Info: images/nehalem.png used on input line 318.
+(pdftex.def)             Requested size: 154.80157pt x 88.96188pt.
+
+<images/harpertown.png, id=157, 380.622pt x 219.219pt>
+File: images/harpertown.png Graphic file (type png)
+
+<use images/harpertown.png>
+Package pdftex.def Info: images/harpertown.png used on input line 319.
+(pdftex.def)             Requested size: 154.80157pt x 89.15784pt.
+ <images/corei7.png, id=158, 380.622pt x 219.219pt>
+File: images/corei7.png Graphic file (type png)
+
+<use images/corei7.png>
+Package pdftex.def Info: images/corei7.png used on input line 320.
+(pdftex.def)             Requested size: 154.80157pt x 89.15784pt.
+ [6]
+Underfull \hbox (badness 10000) in paragraph at lines 353--354
+[]$\OML/cmm/m/it/10 BL[]I[]Reduction$ \OT1/ptm/m/n/10 is the ex-tended ver-sion
+ of
+ []
+
+
+Underfull \hbox (badness 1430) in paragraph at lines 353--354
+$\OML/cmm/m/it/10 BL[]Intrinsic$ \OT1/ptm/m/n/10 that em-ploys in-trin-sics for
+ re-duc-tion
+ []
+
+<images/barcelona.png, id=163, 380.622pt x 218.7372pt>
+File: images/barcelona.png Graphic file (type png)
+
+<use images/barcelona.png>
+Package pdftex.def Info: images/barcelona.png used on input line 380.
+(pdftex.def)             Requested size: 154.80157pt x 88.96188pt.
+
+<images/shanghai.png, id=164, 380.622pt x 218.7372pt>
+File: images/shanghai.png Graphic file (type png)
+
+<use images/shanghai.png>
+Package pdftex.def Info: images/shanghai.png used on input line 381.
+(pdftex.def)             Requested size: 154.80157pt x 88.96188pt.
+ <images/phenom.png, id=165, 378.6948pt x 219.7008pt>
+File: images/phenom.png Graphic file (type png)
+
+<use images/phenom.png>
+Package pdftex.def Info: images/phenom.png used on input line 382.
+(pdftex.def)             Requested size: 154.80157pt x 89.80971pt.
+
+<images/harpertownfinal.png, id=166, 453.8556pt x 312.6882pt>
+File: images/harpertownfinal.png Graphic file (type png)
+
+<use images/harpertownfinal.png>
+Package pdftex.def Info: images/harpertownfinal.png used on input line 390.
+(pdftex.def)             Requested size: 154.80157pt x 106.65132pt.
+
+<images/corei7final.png, id=167, 450.9648pt x 313.6518pt>
+File: images/corei7final.png Graphic file (type png)
+
+<use images/corei7final.png>
+Package pdftex.def Info: images/corei7final.png used on input line 391.
+(pdftex.def)             Requested size: 154.80157pt x 107.66438pt.
+
+<images/nehalemfinal.png, id=168, 454.8192pt x 318.4698pt>
+File: images/nehalemfinal.png Graphic file (type png)
+
+<use images/nehalemfinal.png>
+Package pdftex.def Info: images/nehalemfinal.png used on input line 392.
+(pdftex.def)             Requested size: 154.80157pt x 108.39491pt.
+
+<images/barcelonafinal.png, id=169, 452.892pt x 313.6518pt>
+File: images/barcelonafinal.png Graphic file (type png)
+
+<use images/barcelonafinal.png>
+Package pdftex.def Info: images/barcelonafinal.png used on input line 400.
+(pdftex.def)             Requested size: 154.80157pt x 107.20493pt.
+
+<images/shanghaifinal.png, id=170, 452.892pt x 314.6154pt>
+File: images/shanghaifinal.png Graphic file (type png)
+
+<use images/shanghaifinal.png>
+Package pdftex.def Info: images/shanghaifinal.png used on input line 401.
+(pdftex.def)             Requested size: 154.80157pt x 107.53429pt.
+
+<images/phenomfinal.png, id=171, 449.5194pt x 313.6518pt>
+File: images/phenomfinal.png Graphic file (type png)
+
+<use images/phenomfinal.png>
+Package pdftex.def Info: images/phenomfinal.png used on input line 402.
+(pdftex.def)             Requested size: 154.80157pt x 108.00897pt.
+ [7 <C:/Users/dinwal/Dropbox/Public/blfilter/LateX/images/nehalem.png> <C:/User
 s/dinwal/Dropbox/Public/blfilter/LateX/images/harpertown.png> <C:/Users/dinwal/
-Dropbox/Public/blfilter/LateX/images/corei7.png> <C:/Users/dinwal/Dropbox/Publi
-c/blfilter/LateX/images/barcelona.png> <C:/Users/dinwal/Dropbox/Public/blfilter
-/LateX/images/shanghai.png> <C:/Users/dinwal/Dropbox/Public/blfilter/LateX/imag
-es/phenom.png> <C:/Users/dinwal/Dropbox/Public/blfilter/LateX/images/harpertown
-final.png> <C:/Users/dinwal/Dropbox/Public/blfilter/LateX/images/corei7final.pn
-g> <C:/Users/dinwal/Dropbox/Public/blfilter/LateX/images/nehalemfinal.png>]
-<images/gpuhw10.png, id=87, 325.215pt x 179.16937pt>
+Dropbox/Public/blfilter/LateX/images/corei7.png>]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+
+<images/gpuhw10.png, id=179, 325.215pt x 179.16937pt>
 File: images/gpuhw10.png Graphic file (type png)
  <use images/gpuhw10.png>
-Package pdftex.def Info: images/gpuhw10.png used on input line 528.
-(pdftex.def)             Requested size: 206.39685pt x 113.71114pt.
+Package pdftex.def Info: images/gpuhw10.png used on input line 421.
+(pdftex.def)             Requested size: 247.6778pt x 136.45445pt.
 
-<images/gpuhw5.png, id=88, 324.46219pt x 177.66376pt>
+<images/gpuhw5.png, id=180, 324.46219pt x 177.66376pt>
 File: images/gpuhw5.png Graphic file (type png)
  <use images/gpuhw5.png>
-Package pdftex.def Info: images/gpuhw5.png used on input line 529.
-(pdftex.def)             Requested size: 206.39685pt x 113.01582pt.
+Package pdftex.def Info: images/gpuhw5.png used on input line 422.
+(pdftex.def)             Requested size: 247.6778pt x 135.62225pt.
 
-<images/gpuhw10light.png, id=89, 325.96782pt x 176.91093pt>
+<images/gpuhw10light.png, id=181, 325.96782pt x 176.91093pt>
 File: images/gpuhw10light.png Graphic file (type png)
 
 <use images/gpuhw10light.png>
-Package pdftex.def Info: images/gpuhw10light.png used on input line 530.
-(pdftex.def)             Requested size: 206.39685pt x 112.02135pt.
+Package pdftex.def Info: images/gpuhw10light.png used on input line 423.
+(pdftex.def)             Requested size: 247.6778pt x 134.424pt.
 
-<images/gpuhw5light.png, id=90, 325.96782pt x 176.91093pt>
+<images/gpuhw5light.png, id=182, 325.96782pt x 176.91093pt>
 File: images/gpuhw5light.png Graphic file (type png)
 
 <use images/gpuhw5light.png>
-Package pdftex.def Info: images/gpuhw5light.png used on input line 531.
-(pdftex.def)             Requested size: 206.39685pt x 112.02135pt.
+Package pdftex.def Info: images/gpuhw5light.png used on input line 424.
+(pdftex.def)             Requested size: 247.6778pt x 134.424pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 528--533
+Overfull \hbox (2.67792pt too wide) in paragraph at lines 421--426
 [][]
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 528--533
+Overfull \hbox (2.67792pt too wide) in paragraph at lines 421--426
 []
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 528--533
+Overfull \hbox (2.67792pt too wide) in paragraph at lines 421--426
 []
  []
 
-(C:\Users\dinwal\Dropbox\Public\blfilter\LateX\paper8.bbl [10 <C:/Users/dinwal/
-Dropbox/Public/blfilter/LateX/images/barcelonafinal.png> <C:/Users/dinwal/Dropb
-ox/Public/blfilter/LateX/images/shanghaifinal.png> <C:/Users/dinwal/Dropbox/Pub
-lic/blfilter/LateX/images/phenomfinal.png>]
-Underfull \vbox (badness 1163) has occurred while \output is active []
 
-) [11 <C:/Users/dinwal/Dropbox/Public/blfilter/LateX/images/gpuhw10.png> <C:/Us
-ers/dinwal/Dropbox/Public/blfilter/LateX/images/gpuhw5.png> <C:/Users/dinwal/Dr
-opbox/Public/blfilter/LateX/images/gpuhw10light.png> <C:/Users/dinwal/Dropbox/P
-ublic/blfilter/LateX/images/gpuhw5light.png>]
-(C:\Users\dinwal\Dropbox\Public\blfilter\LateX\paper8.aux)
+Overfull \hbox (2.67792pt too wide) in paragraph at lines 421--426
+[]
+ []
 
-LaTeX Warning: There were multiply-defined labels.
 
- ) 
+Underfull \hbox (badness 10000) in paragraph at lines 421--426
+
+ []
+
+
+Underfull \vbox (badness 4531) has occurred while \output is active []
+
+ [8 <C:/Users/dinwal/Dropbox/Public/blfilter/LateX/images/barcelona.png> <C:/Us
+ers/dinwal/Dropbox/Public/blfilter/LateX/images/shanghai.png> <C:/Users/dinwal/
+Dropbox/Public/blfilter/LateX/images/phenom.png> <C:/Users/dinwal/Dropbox/Publi
+c/blfilter/LateX/images/harpertownfinal.png> <C:/Users/dinwal/Dropbox/Public/bl
+filter/LateX/images/corei7final.png> <C:/Users/dinwal/Dropbox/Public/blfilter/L
+ateX/images/nehalemfinal.png> <C:/Users/dinwal/Dropbox/Public/blfilter/LateX/im
+ages/barcelonafinal.png> <C:/Users/dinwal/Dropbox/Public/blfilter/LateX/images/
+shanghaifinal.png> <C:/Users/dinwal/Dropbox/Public/blfilter/LateX/images/phenom
+final.png>]
+[9 <C:/Users/dinwal/Dropbox/Public/blfilter/LateX/images/gpuhw10.png> <C:/Users
+/dinwal/Dropbox/Public/blfilter/LateX/images/gpuhw5.png> <C:/Users/dinwal/Dropb
+ox/Public/blfilter/LateX/images/gpuhw10light.png> <C:/Users/dinwal/Dropbox/Publ
+ic/blfilter/LateX/images/gpuhw5light.png>]
+(C:\Users\dinwal\Dropbox\Public\blfilter\LateX\paper8.bbl) [10]
+(C:\Users\dinwal\Dropbox\Public\blfilter\LateX\paper8.aux) ) 
 Here is how much of TeX's memory you used:
- 18678 strings out of 494045
- 422055 string characters out of 3145965
+ 18712 strings out of 494045
+ 422627 string characters out of 3145965
  546967 words of memory out of 3000000
- 21553 multiletter control sequences out of 15000+200000
- 46058 words of font info for 92 fonts, out of 3000000 for 9000
+ 21588 multiletter control sequences out of 15000+200000
+ 45543 words of font info for 90 fonts, out of 3000000 for 9000
  715 hyphenation exceptions out of 8191
- 56i,11n,74p,2284b,609s stack positions out of 5000i,500n,10000p,200000b,50000s
-{C:/Program Files (x86)/MiKTeX 2.9/fonts/enc/dvips/fontname/8r.enc}<C:/Progra
-m Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmex10.pfb><C:/Program 
-Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cmextra/cmex7.pfb><C:/Progra
-m Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi10.pfb><C:/Program 
-Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi6.pfb><C:/Program Fil
-es (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi7.pfb><C:/Program Files 
-(x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi8.pfb><C:/Program Files (x8
-6)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Program Files (x86)/
-MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr5.pfb><C:/Program Files (x86)/MiKT
-eX 2.9/fonts/type1/public/amsfonts/cm/cmr7.pfb><C:/Program Files (x86)/MiKTeX 2
-.9/fonts/type1/public/amsfonts/cm/cmr8.pfb><C:/Program Files (x86)/MiKTeX 2.9/f
-onts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Program Files (x86)/MiKTeX 2.9/fon
-ts/type1/public/amsfonts/cm/cmsy7.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/
-type1/urw/courier/ucrr8a.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/urw
-/times/utmb8a.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/urw/times/utmb
-i8a.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/urw/times/utmr8a.pfb><C:
-/Program Files (x86)/MiKTeX 2.9/fonts/type1/urw/times/utmri8a.pfb>
-Output written on paper8.pdf (11 pages, 2586213 bytes).
+ 56i,11n,74p,2285b,609s stack positions out of 5000i,500n,10000p,200000b,50000s
+{C:/Program Files (
+x86)/MiKTeX 2.9/fonts/enc/dvips/fontname/8r.enc}<C:/Program Files (x86)/MiKTeX 
+2.9/fonts/type1/public/amsfonts/cm/cmex10.pfb><C:/Program Files (x86)/MiKTeX 2.
+9/fonts/type1/public/amsfonts/cmextra/cmex7.pfb><C:/Program Files (x86)/MiKTeX 
+2.9/fonts/type1/public/amsfonts/cm/cmmi10.pfb><C:/Program Files (x86)/MiKTeX 2.
+9/fonts/type1/public/amsfonts/cm/cmmi6.pfb><C:/Program Files (x86)/MiKTeX 2.9/f
+onts/type1/public/amsfonts/cm/cmmi7.pfb><C:/Program Files (x86)/MiKTeX 2.9/font
+s/type1/public/amsfonts/cm/cmmi8.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/t
+ype1/public/amsfonts/cm/cmr10.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type
+1/public/amsfonts/cm/cmr5.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/pu
+blic/amsfonts/cm/cmr7.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public
+/amsfonts/cm/cmr8.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/ams
+fonts/cm/cmsy10.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfo
+nts/cm/cmsy7.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/urw/times/utmb8
+a.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/urw/times/utmbi8a.pfb><C:/
+Program Files (x86)/MiKTeX 2.9/fonts/type1/urw/times/utmr8a.pfb><C:/Program Fil
+es (x86)/MiKTeX 2.9/fonts/type1/urw/times/utmri8a.pfb>
+Output written on paper8.pdf (10 pages, 2406102 bytes).
 PDF statistics:
- 155 PDF objects out of 1000 (max. 8388607)
+ 253 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
- 139 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 154 words of extra memory for PDF output out of 10000 (max. 10000000)
 
