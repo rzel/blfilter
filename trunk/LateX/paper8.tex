@@ -21,7 +21,7 @@
 \DeclareGraphicsExtensions{.pdf,.png,.jpg,.eps}
 
 \begin{document}
-\title{Acceleration of Bilateral filtering algorithm for manycore and multicore architectures}
+\title{Accelerated Bilateral Filtering for Many-core and Multi-core Architectures}
 \author{\IEEEauthorblockN{Dinesh Agarwal, Sami Wilf, Abinashi Dhungel, and Sushil K. Prasad}\\
 \IEEEauthorblockA{ Georgia State University\\
  Department of Computer Science\\
@@ -29,7 +29,7 @@
  }}
 \maketitle
 \begin{abstract}
-This work explores multicore and manycore acceleration for the embarrassingly parallel, compute-intensive Bilateral filtering kernel. For manycore architectures, we have created a pair-symmetric algorithm to avoid redundant calculations and for multicore architectures we improve the algorithm by use of low level single instruction multiple data (SIMD) parallelism across multiple threads. We present empirical data evidencing the performance gains we achieved over variety of hardware architectures including Nvidia GTX280, AMD Barcelona, AMD Shanghai, Intel Harpertown, AMD Phenom, Intel Core i7 quad core, and Intel Nehalem 32 core machines. The best speedup achieved was a 235.5x speedup by our CUDA-based implementation of our pair-symmetric algorithm running on Nvidia's GTX280. Our CPU multicore implementations resulted in a speedup of up to 38x using 16 cores of AMD Barcelona each with 4-stage vector pipeline, up to 23x using 8 cores for Intel Harpertown, and up to 26x using 32 cores of Intel Nehalem multicore machines compared to a compiler-optimized code.
+This work explores multicore and many-core acceleration for the embarrassingly parallel, compute-intensive Bilateral filtering kernel. For many-core architectures, we have created a pair-symmetric algorithm to avoid redundant calculations and for multicore architectures we improve the algorithm by use of low level single instruction multiple data (SIMD) parallelism across multiple threads. We present empirical data evidencing the performance gains we achieved over variety of hardware architectures including Nvidia GTX280, AMD Barcelona, AMD Shanghai, Intel Harpertown, AMD Phenom, Intel Core i7 quad core, and Intel Nehalem 32 core machines. The best speedup achieved was a 235.5x speedup by our CUDA-based implementation of our pair-symmetric algorithm running on Nvidia's GTX280. Our CPU multicore implementations resulted in a speedup of up to 38x using 16 cores of AMD Barcelona each with 4-stage vector pipeline, up to 23x using 8 cores for Intel Harpertown, and up to 26x using 32 cores of Intel Nehalem multicore machines compared to a compiler-optimized code.
 \end{abstract}
 % For peer review papers, you can put extra information on the cover
 % page as needed:
@@ -302,19 +302,19 @@ While intra-warp synchronization is guaranteed, the rate at which warps stream t
 
 \subsection{Shared Memory and Tile Processing}
 \begin{figure}
-\includegraphics[width = 0.48 \columnwidth]{images/project24.pdf}
+\includegraphics[width = 1\columnwidth]{images/project23_.pdf}
 \caption{Illustration of our CUDA implementation of pair-symmetric processing using implicit intra-wap synchronization for iterating through the pixel-cells for each thread-block's assigned tile.}
 \label{fig:pspro}
 \end{figure}
 
 \begin{figure}
-\includegraphics[width = 0.48  \columnwidth]{images/tiles19.pdf}
+\includegraphics[width = 1\columnwidth]{images/tiles19.pdf}
 \caption{Illustration of our CUDA implemented pair-symmetric algorithm processing a 24 x 12 pixel image using 2 x 2 thread-blocks each with 4 x 3 threads and with the half-width parameter set to 3 pixels.}
 \label{fig:pspro}
 \end{figure}
 
 \begin{figure}
-\includegraphics[width = 0.48  \columnwidth]{images/smallfaces5.pdf}
+\includegraphics[width = 1\columnwidth]{images/smallfaces5.pdf}
 \caption{An illustrated overview of the bilateral filtering process. The six raster images of processed tiles reflect the successive work of the four concurrent thread-blocks iteratively carried out over the padded source-image.}
 \label{fig:pspro}
 \end{figure}
@@ -323,17 +323,17 @@ CUDA features three types of memory with read/write capability suitable for gene
 
 Our tile-based processing approach is self-explanatory. Equal sized partitions of the input data are processed, and then any remaining data on and between the edge and the last partition that is closest to (but not falling over) the edge boundary of the 2-dimensional data representation is processed. With respect to the naive Bilateral filtering algorithm, tile-based processing is trivial and needs no further explanation because simply partitioning the space and processing it will suffice. However, for the pair-symmetric algorithm that we propose, tile-based Bilateral filtering algorithm requires adjustments in the order in which tiles are processed in order to guarantee the exclusion of race conditions. 
 
-\begin{figure}
-\includegraphics[width=0.48\textwidth]{images/stackedtiles}
-\caption{Tiling for Pair-Symmetric Stencil Processing with each tile having a unique color and overlapping tiles have a resultant color that results from mixing colors of overlapping tiles. The pair-symmetric thread access pattern ensures exclusive memory writes.}
-\label{fig:Tiling-for-Pair-Symmetric}
-\end{figure}
+%\begin{figure}
+%\includegraphics[width=0.48\textwidth]{images/stackedtiles}
+%\caption{Tiling for Pair-Symmetric Stencil Processing with each tile having a unique color and overlapping tiles have a resultant color that results from mixing colors of overlapping tiles. The pair-symmetric thread access pattern ensures exclusive memory writes.}
+%\label{fig:Tiling-for-Pair-Symmetric}
+%\end{figure}
 
-\begin{figure}
-\includegraphics[width=0.48\textwidth]{images/lenatiles}
-\caption{Input image after one iteration of pair-symmetric algorithm. Tiles do not have perfect boundaries due to overlaps.}
-\label{fig:An-iteration-of}
-\end{figure}
+%\begin{figure}
+%\includegraphics[width=0.48\textwidth]{images/lenatiles}
+%\caption{Input image after one iteration of pair-symmetric algorithm. Tiles do not have perfect boundaries due to overlaps.}
+%\label{fig:An-iteration-of}
+%\end{figure}
 
 If processes were assigned to adjacent tiles, race conditions would occur because the edge cells of the tiles would overlap each other due to intersecting half-width periphery regions, as illustrated in Figure~\ref{fig:Tiling-for-Pair-Symmetric}. To get around this problem, simultaneously processed tiles can be spaced apart in strides such that no two tiles being processed at the same time intersect with one another. An example of such a technique is illustrated in Figure~\ref{fig:An-iteration-of} (the tiles are flipped sideways in this rendering). 
 
@@ -519,7 +519,7 @@ On the GPU, our pair-symmetric algorithm outperformed our naive algorithm for ev
 
 While our tests returned a maximum 25\% reduction in execution time, our pair-symmetric algorithm has the potential to reach a near 50\% reduction in execution time. Furthermore, the benchmarks of our pair-symmetric algorithm reveal minor irregularities in the trajectory of performance derived from execution timings versus respective incremental adjustments of parameter values such as CUDA block and grid dimensions. The main cause of both of these observations is shared memory. To better understand the impact of the additional shared memory transactions that our pair-symmetric algorithm requires, whereas the naive algorithm does not require shared memory for output storage, we implemented a single-threaded CPU-based version of both the naive bilateral filter algorithm and pair-symmetric algorithm so that native-memory (RAM, L1, or L2 cache) could substitute for the GPU's shared memory. The results were remarkably illustrative of our pair-symmetric algorithm's potential. The naive algorithm running on the CPU with a filter width of 10 pixels processed a 3000 x 3000 image in an average of 1206.7 seconds while our pair-symmetric algorithm took 611.8 seconds - a 49.23\% reduction in execution time. Moreover, when replacing shared memory transactions with dummy register transactions in our CUDA implementation of the pair-symmetric algorithm, we observed a consistent 40\% reduction in execution time. From these findings, we conclude that the inferior speed of GPU shared memory transactions to register transactions is what limited our pair-symmetric algorithm's performance gains to  a maximum of 33\%, i.e., reducing timings by no more than than 25\%. To further verify this inference, we meticulously stepped through the Parallel Thread Execution (PTX) code, CUDA's quasi-assembly language, of our CUDA implementations to ensure that no unintended optimizations were being made by the compiler when substituting shared memory transactions with dummy register transactions. Not only were no optimizations being made but the PTX code showed that the shared memory transactions required additional load and store instructions, further evidencing the cost of using shared memory.
 
-Another challenge in interpreting our results was porting the concept of "speed-up" to general purpose GPU programming. Since speed-up is necessarily with respect to a reference timing, we used the same reference timing that our CPU optimizations used---that is how we calculated the 235.5x speed-up figure stated in the abstract of this paper---and we also made another reference timing by running our GPU implementations using a single thread. For example, using a single thread operating with filter width of 10 pixels to process a 768 x 512 pixel image, the time taken for the GTX280 to complete this execution was an average of 177.9 seconds for both of our algorithms; using a filter width of 5 pixels, the average execution time was 50.5 seconds for both algorithms. With respect to these reference timings, the speed-up is roughly 20,500x for the 10 pixel filter width and 12,440x for the 5 pixel filter width.
+Another challenge in interpreting our results was porting the concept of "speed-up" to general purpose GPU programming. Since speed-up is necessarily with respect to a reference timing, we used the same reference timing that our CPU optimizations used---that is how we calculated the 235.5x speed-up figure stated in the abstract of this paper---and we also made another reference timing by running our GPU implementations using a single thread. For example, using a single thread operating with filter width of 10 pixels to process a 768 x 512 pixel image, the time taken for the GTX280 to complete this execution was an average of 177.9 seconds for both of our algorithms; using a filter width of 5 pixels, the average execution time was 50.5 seconds for both algorithms. With respect to these reference timings, the speed-up is roughly 21,090x for the 10 pixel filter width and 12,440x for the 5 pixel filter width.
 
 \begin{figure}[t!] 
 \begin{centering} 
