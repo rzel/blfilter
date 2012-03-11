@@ -21,13 +21,6 @@
 \providecommand{\BIBdecl}{\relax}
 \BIBdecl
 
-\bibitem{landscapeofpc}
-K.~Asanovic, R.~Bodik, B.~C. Catanzaro, J.~J. Gebis, P.~Husbands, K.~Keutzer,
-  D.~A. Patterson, W.~L. Plishker, J.~Shalf, S.~W. Williams, and K.~A. Yelick,
-  ``{The Landscape of Parallel Computing Research: A View From Berkeley},''
-  Electrical Engineering and Computer Sciences, University of California at
-  Berkeley, Tech. Rep., Dec. 2006.
-
 \bibitem{Tomasi1998}
 C.~Tomasi and R.~Manduchi, ``Bilateral filtering for gray and color images,''
   in \emph{Computer Vision, 1998. Sixth International Conference on}, Jan.
