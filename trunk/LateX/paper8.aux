@@ -40,9 +40,6 @@
 \@writefile{lof}{\contentsline {subfigure}{\numberline{(c)}{\ignorespaces {An illustrated overview of the bilateral filtering process}}}{4}}
 \newlabel{fig:intrawarp}{{3}{4}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\unhbox \voidb@x \hbox {III-B}}Shared Memory and Tile Processing}{4}}
-\citation{kdatta2008}
-\citation{matrix-multi,MatrixMultiFloating}
-\citation{NCCmatching}
 \@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Tiling for Pair-Symmetric bilateral filtering with each tile having a unique color. Overlapping tiles have a resultant color.}}{5}}
 \newlabel{fig:Tiling-for-Pair-Symmetric}{{4}{5}}
 \@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Input image after one iteration of pair-symmetric algorithm. Tiles do not have perfect boundaries due to overlaps.}}{5}}
@@ -52,15 +49,18 @@
 \@writefile{toc}{\contentsline {subsection}{\numberline {\unhbox \voidb@x \hbox {IV-A}}Memory to computation ratio of bilateral filtering kernel}{5}}
 \@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Percentage of time taken by sequential kernel when run without $exp$ instruction, $filter$ $radius$=10.}}{5}}
 \newlabel{fig:noexp}{{6}{5}}
+\citation{kdatta2008}
+\citation{matrix-multi,MatrixMultiFloating}
+\citation{NCCmatching}
 \citation{Tomasi1998}
-\@writefile{lot}{\contentsline {table}{\numberline {I}{\ignorespaces Architectural details of multicore chips employed for experiments}}{6}}
-\newlabel{tab:archs}{{I}{6}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\unhbox \voidb@x \hbox {IV-B}}SIMD optimizations}{6}}
 \newlabel{sub:SIMD1}{{\unhbox \voidb@x \hbox {IV-B}}{6}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\unhbox \voidb@x \hbox {IV-C}}Reduction Methods}{6}}
 \newlabel{sub:reduction}{{\unhbox \voidb@x \hbox {IV-C}}{6}}
 \@writefile{toc}{\contentsline {section}{\numberline {V}Experimental Testbed}{6}}
 \newlabel{sec:expt}{{V}{6}}
+\@writefile{lot}{\contentsline {table}{\numberline {I}{\ignorespaces Architectural details of multicore chips employed for experiments}}{7}}
+\newlabel{tab:archs}{{I}{7}}
 \newlabel{fig:Nehalem}{{7(a)}{7}}
 \newlabel{sub@fig:Nehalem}{{(a)}{7}}
 \newlabel{fig:harpertown}{{7(b)}{7}}
@@ -93,7 +93,7 @@
 \newlabel{sub@fig:corei7Final}{{(b)}{8}}
 \newlabel{fig:NehalemFinal}{{9(c)}{8}}
 \newlabel{sub@fig:NehalemFinal}{{(c)}{8}}
-\@writefile{lof}{\contentsline {figure}{\numberline {9}{\ignorespaces Comparison of combined speedup due to SIMDization and OpenMP parallelization on Intel chips for different algorithms}}{8}}
+\@writefile{lof}{\contentsline {figure}{\numberline {9}{\ignorespaces Speedup on Intel Chips using OpenMP along with SSE}}{8}}
 \@writefile{lof}{\contentsline {subfigure}{\numberline{(a)}{\ignorespaces {Harpertown Xeon E5410}}}{8}}
 \@writefile{lof}{\contentsline {subfigure}{\numberline{(b)}{\ignorespaces {Core i7 - 870}}}{8}}
 \@writefile{lof}{\contentsline {subfigure}{\numberline{(c)}{\ignorespaces {Nehalem-EX Xeon X7650}}}{8}}
@@ -104,26 +104,28 @@
 \newlabel{sub@fig:ShanghaiFinal}{{(b)}{8}}
 \newlabel{fig:PhenomFinal}{{10(c)}{8}}
 \newlabel{sub@fig:PhenomFinal}{{(c)}{8}}
-\@writefile{lof}{\contentsline {figure}{\numberline {10}{\ignorespaces Comparison of combined speedup due to SIMDization and OpenMP parallelization on AMD chips for different algorithms.}}{8}}
+\@writefile{lof}{\contentsline {figure}{\numberline {10}{\ignorespaces Speedup on AMD chips using OpenMP along with SSE}}{8}}
 \@writefile{lof}{\contentsline {subfigure}{\numberline{(a)}{\ignorespaces {Barcelona AMD Opteron 8350}}}{8}}
 \@writefile{lof}{\contentsline {subfigure}{\numberline{(b)}{\ignorespaces {Shanghai AMD Opteron 2376}}}{8}}
 \@writefile{lof}{\contentsline {subfigure}{\numberline{(c)}{\ignorespaces {AMD Phenom II 1045T}}}{8}}
 \newlabel{fig:comparisonFinalAMD}{{10}{8}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\unhbox \voidb@x \hbox {VI-B}}Performance of bilateral filtering kernel on GPU}{9}}
-\newlabel{fig:hw10}{{11(a)}{9}}
+\@writefile{lof}{\contentsline {figure}{\numberline {11}{\ignorespaces Time taken by Intel Nehalem architecture}}{8}}
+\newlabel{fig:nehalemtime}{{11}{8}}
+\newlabel{fig:hw10}{{12(a)}{9}}
 \newlabel{sub@fig:hw10}{{(a)}{9}}
-\newlabel{fig:hw5}{{11(b)}{9}}
+\newlabel{fig:hw5}{{12(b)}{9}}
 \newlabel{sub@fig:hw5}{{(b)}{9}}
-\newlabel{fig:hw10light}{{11(c)}{9}}
+\newlabel{fig:hw10light}{{12(c)}{9}}
 \newlabel{sub@fig:hw10light}{{(c)}{9}}
-\newlabel{fig:hw5light}{{11(d)}{9}}
+\newlabel{fig:hw5light}{{12(d)}{9}}
 \newlabel{sub@fig:hw5light}{{(d)}{9}}
-\@writefile{lof}{\contentsline {figure}{\numberline {11}{\ignorespaces Performance of Naive and pair-symmetric (P.S.) bilateral filtering kernel algorithms on GTX 280 NVidia card for both smaller image and larger image.}}{9}}
-\@writefile{lof}{\contentsline {subfigure}{\numberline{(a)}{\ignorespaces {Large Image, Filter Width = $10$}}}{9}}
-\@writefile{lof}{\contentsline {subfigure}{\numberline{(b)}{\ignorespaces {Large Image, Filter Width = $5$}}}{9}}
-\@writefile{lof}{\contentsline {subfigure}{\numberline{(c)}{\ignorespaces {Smaller Image, Filter Width = $10$}}}{9}}
-\@writefile{lof}{\contentsline {subfigure}{\numberline{(d)}{\ignorespaces {Smaller Image, Filter Width = $5$}}}{9}}
-\newlabel{fig:gpuresults}{{11}{9}}
+\@writefile{lof}{\contentsline {figure}{\numberline {12}{\ignorespaces Performance of Naive and pair-symmetric (P.S.) bilateral filtering kernel algorithms on GTX 280 NVidia card for both smaller image and larger image.}}{9}}
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(a)}{\ignorespaces {Large 3000X3000 Image, Filter Width = $10$}}}{9}}
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(b)}{\ignorespaces {Large 3000X3000 Image, Filter Width = $5$}}}{9}}
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(c)}{\ignorespaces {Smaller 768X512 Image, Filter Width = $10$}}}{9}}
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(d)}{\ignorespaces {Smaller 768X512 Image, Filter Width = $5$}}}{9}}
+\newlabel{fig:gpuresults}{{12}{9}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\unhbox \voidb@x \hbox {VI-B}}Performance of bilateral filtering kernel on GPU}{9}}
 \bibstyle{IEEEtran}
 \bibdata{paper}
 \bibcite{Tomasi1998}{1}

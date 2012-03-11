@@ -321,6 +321,7 @@ In order to evaluate our implementation we have tried it on a range of multicore
 \caption{Bilateral filtering kernel on Intel chips. The baseline version is BL\_Naive version, auto optimized by compiler with O3 and SSE flags.} 
 \label{fig:comparisonIntel} 
 \end{figure*} 
+
 %
 %\subsection{Hardware}
 %\label{subsec:hw} 
@@ -364,16 +365,6 @@ In order to analyze the behavior of our kernel with varying image sizes, we have
 \subsection{Performance of bilateral filtering kernel on CPU}
 For all of our experiments the filter radius was kept at 10, subsequently making the filter Window of size 21 x 21. The spatial spread and the photometric spread were also set to 10. The optimization flag $-O3$ was used for all experiments in addition to SSE2 for SIMDization. For Core i7 chip compiler flag SSE4.2 was used instead of SSE2. We do not use hyperthreading, i.e. there are no more than one thread per core. 
 
-Figure~\ref{fig:comparisonIntel} compares different algorithms on all three $Intel$ chips. In this experiment we are comparing the absolute speedup achieved by the respective algorithm compared to BL\_Naive algorithm. It is important to note that these results are for micro level parallelism (use of 128 bit special purpose registers) only; the results do not consider speedup due to high level (OpenMP) parallelization. The parallel versions shown here are compared against the parallel version of BL\_Naive algorithm. The speedup for all algorithms is still bounded by the theoretical peak speedup which happens to be four here, since we work with 32bit floating point numbers. Interestingly, although we use compiler optimization flags such as -O3 and -xSSE2, i.e. there is automated vectorization taking place in all the algorithms, our hand coded vectorization is superior in many cases.
-
-The speedup shown by BL\_Tiles is mostly due to the computation reduction, as discussed in section \ref{sec:expt}, because we do not use special purpose registers in this algorithm. It can be seen from figure~\ref{fig:comparisonIntel} that the parallelism due to SIMDization is limited by four which is the theoretical maximum possible speedup due to SSE registers as discussed in section \ref{sub:SIMD1}.
-
-As seen in figure~\ref{fig:Nehalem}, the maximum speedup achieved on Nehalem architecture only using SSE optimization is 2.29x for the smaller image and 1.33x for the larger image. Smaller image generally performs better because the time to copy data to SSE registers is less as the entire image is always available in the cache memory. The BL\_Naive algorithm outperforms our assembly level implementations but it is slower than our intrinsic based implementations in all cases. The reason for this is that the auto SIMDization by compiler is more efficient than our implementation for Nehalem architecture. Intel Harpertown, which is a relatively older chip, shows an impressive speedup of 3.54x (Figure~\ref{fig:harpertown}) even though compiler optimizations are still in place. 
-
-Another interesting observation is the results on Intel Core i7 architecture shown in Figure~\ref{fig:corei7}, where we have the absolute speedup of less than $1$. This indicates the fact that the automated compiler optimizations on newer chips are superior than on older chips. These experiments were run with $SSE4.2$ compiler flag and hence the compiler is able to exploit SIMDization automatically thus making it difficult to surpass it using assembly level coding. 
-
-However, our algorithms that use SSE intrinsics and reduction, i.e. BL\_A\_Reduction, BL\_Intrinsic, and BL\_I\_Reduction are able to provide better speedups than those achieved by compiler optimizations as shown in Figure~\ref{fig:comparisonIntel} and Figure~\ref{fig:comparisonAMD}.
-
 \begin{figure*} [t!]
 \begin{centering} 
 \subfigure[Barcelona AMD Opteron 8350]{ \includegraphics[width=0.3\textwidth]{images/barcelona} \label{fig:barcelona} } 
@@ -383,57 +374,83 @@ However, our algorithms that use SSE intrinsics and reduction, i.e. BL\_A\_Reduc
 \caption{Bilateral filtering kernel on AMD chips. The comparison is with BL\_Naive version, auto optimized by compiler with O3 and SSE flags.} 
 \label{fig:comparisonAMD} 
 \end{figure*}
-
 \begin{figure*}[t!] 
 \begin{centering} 
 \subfigure[Harpertown Xeon E5410]{  \includegraphics[width=0.3\textwidth]{images/harpertownfinal} \label{fig:harpertownFinal} } 
 \subfigure[Core i7 - 870]{ \includegraphics[width=0.3\textwidth]{images/corei7final} \label{fig:corei7Final} } 
 \subfigure[Nehalem-EX Xeon X7650]{ \includegraphics[width=0.3\textwidth]{images/nehalemfinal} \label{fig:NehalemFinal} } 
 \end{centering}
-\caption{Comparison of combined speedup due to SIMDization and OpenMP parallelization on Intel chips for different algorithms} 
+\caption{Speedup on Intel Chips using OpenMP along with SSE} 
 \label{fig:comparisonFinalIntel} 
 \end{figure*} 
-
 \begin{figure*}[t!]
 \begin{centering} 
 \subfigure[Barcelona AMD Opteron 8350]{ \includegraphics[width=0.3\textwidth]{images/barcelonafinal} \label{fig:barcelonaFinal} } 
 \subfigure[Shanghai AMD Opteron 2376]{ \includegraphics[width=0.3\textwidth]{images/shanghaifinal} \label{fig:ShanghaiFinal} } 
 \subfigure[AMD Phenom II 1045T]{ \includegraphics[width=0.3\textwidth]{images/phenomfinal} \label{fig:PhenomFinal} } 
 \end{centering}
-\caption{Comparison of combined speedup due to SIMDization and OpenMP parallelization on AMD chips for different algorithms.} 
+\caption{Speedup on AMD chips  using OpenMP along with SSE} 
 \label{fig:comparisonFinalAMD} 
 \end{figure*} 
 
+
+Figure~\ref{fig:comparisonIntel} compares different algorithms on all three $Intel$ chips. In this experiment we are comparing the absolute speedup achieved by the respective algorithm compared to BL\_Naive algorithm. It is important to note that these results are for micro level parallelism (use of 128 bit special purpose registers) only; the results do not consider speedup due to high level (OpenMP) parallelization. The parallel versions shown here are compared against the parallel version of BL\_Naive algorithm. The speedup for all algorithms is still bounded by the theoretical peak speedup which happens to be four here, since we work with 32bit floating point numbers. Interestingly, although we use compiler optimization flags such as -O3 and -xSSE2, i.e. there is automated vectorization taking place in all the algorithms, our hand coded vectorization is superior in many cases.
+
+
+The speedup shown by BL\_Tiles is mostly due to the computation reduction, as discussed in section \ref{sec:expt}, because we do not use special purpose registers in this algorithm. It can be seen from figure~\ref{fig:comparisonIntel} that the parallelism due to SIMDization is limited by four which is the theoretical maximum possible speedup due to SSE registers as discussed in section \ref{sub:SIMD1}.
+
+As seen in figure~\ref{fig:Nehalem}, the maximum speedup achieved on Nehalem architecture only using SSE optimization is 2.29x for the smaller image and 1.33x for the larger image. Smaller image generally performs better because the time to copy data to SSE registers is less as the entire image is always available in the cache memory. The BL\_Naive algorithm outperforms our assembly level implementations but it is slower than our intrinsic based implementations in all cases. The reason for this is that the auto SIMDization by compiler is more efficient than our implementation for Nehalem architecture. Intel Harpertown, which is a relatively older chip, shows an impressive speedup of 3.54x (Figure~\ref{fig:harpertown}) even though compiler optimizations are still in place. 
+
+Another interesting observation is the results on Intel Core i7 architecture shown in Figure~\ref{fig:corei7}, where we have the absolute speedup of less than $1$. This indicates the fact that the automated compiler optimizations on newer chips are superior than on older chips. These experiments were run with $SSE4.2$ compiler flag and hence the compiler is able to exploit SIMDization automatically thus making it difficult to surpass it using assembly level coding. 
+
+However, our algorithms that use SSE intrinsics and reduction, i.e. BL\_A\_Reduction, BL\_Intrinsic, and BL\_I\_Reduction are able to provide better speedups than those achieved by compiler optimizations as shown in Figure~\ref{fig:comparisonIntel} and Figure~\ref{fig:comparisonAMD}.
+
 Figure~\ref{fig:comparisonAMD} shows the similar comparison across AMD chips. The results are in tune with those for Intel platform. As shown in Figure~\ref{fig:barcelona} for Barcelona, which is a relatively older chip, the maximum speedup is 3.24x for BL\_I\_Reduction algorithm. Similarly, for AMD Shanghai, as shown in Figure~\ref{fig:Shanghai}, the maximum speedup achieved by exploiting SIMDization is 3.02x for BL\_I\_Reduction algorithm. The case of AMD Phenom is shown in Figure~\ref{fig:Phenom}. The auto tuning applied by the compiler outperforms the manual tuning in case of BL\_Assembly and BL\_A\_Reduction. However, BL\_Intrinsic and BL\_I\_Reduction are still able to outperform compiler optimizations. The maximum speedup achieved in this case is 1.30x.
 
-The next set of results demonstrate the total speedup due to OpenMP as well as due to SIMDization. It is interesting to see how speedup due to OpenMP multiplies with the speedup due to SSE optimizations to exhibit super linear speedup.
+The next set of results demonstrate the total speedup due to OpenMP as well as due to SIMDization. It is interesting to see how speedup due to OpenMP, demonstrated by BL\_Naive algorithm,  multiplies with the speedup due to SSE optimizations to exhibit super linear speedup.
 
-Figure~\ref{fig:harpertownFinal} shows the performance of bilateral filtering kernel on Intel Harpertown. This machine has 8 cores and the maximum combined speedup achieved is 20.91x. The speedup achieved only using only SSE optimization was 2.69x and the speedup achieved by BL\_Naive algorithm using 8 cores is 7.73x.
+Figure~\ref{fig:harpertownFinal} shows the performance of bilateral filtering kernel on Intel Harpertown. This machine has 8 cores and the maximum combined speedup achieved is 23.07x. The speedup achieved only using only SSE optimization was 2.69x and the speedup achieved by BL\_Naive algorithm using 8 cores is 7.73x.
 
-Intel Nehalem chip with 32 cores does not show a super-linear speedup as shown in Figure~\ref{fig:NehalemFinal}. However, the reason behind this is the lack of enough parallelism that can be afforded by the kernel for this image. Both optimizations still multiply their individual speedup to result in the combined speedup. The total combined speedup is 26.46x using 32 cores, the speedup only due to SSE was 1.12x and the speedup for BL\_Naive is 23.47x.
-
-Intel Core i7 chip (Figure~\ref{fig:corei7Final}) also demonstrates the similar behavior. The final speedup of 4.63x, using 4 cores, is a result of speedup due to SSE which is 1.33x and speedup due to OpenMP which is 3.48x. 
-
-Figure~\ref{fig:comparisonFinalAMD} shows a similar comparison over various AMD chips. Figure~\ref{fig:barcelonaFinal} shows the speedup for Barcelona chip. This chip has 16 cores with a combined maximum speedup being 38.03x. The speedup achieved using SSE optimizations was 2.48x and the speedup for BL\_Naive was 15.34x and thus these both realize a speedup of 38.03x using 16 cores.
-\begin{figure}
+\begin{wrapfigure}{r}{0.25\textwidth}
+\centering
+\includegraphics[width=0.25\textwidth]{images/nehalemtime}
+\caption{Time taken by Intel Nehalem architecture}
+\vspace{0mm}
+\label{fig:nehalemtime}
+\end{wrapfigure}
+Intel Nehalem chip with 32 cores shows an impressive speedup as shown in Figure~\ref{fig:NehalemFinal}. The reason behind not showing a super-linear speedup in this case is the lack of enough parallelism that can be afforded by the kernel for this image. Figure~\ref{fig:nehalemtime} shows the absolute timings for the entire process, the timings tend to saturate with 32 processors as the total processing time approaches one second. Both optimizations still multiply their individual speedup to result in the combined speedup. The final speedup is 26.46x using 32 cores; the speedup only due to SSE was 1.12x and the speedup for BL\_Naive algorithm was 23.47x. 
+\begin{figure*}[t!]
 \begin{centering} 
-\subfigure[Large Image, Filter Width = $10$]{ \includegraphics[width=0.48\textwidth]{images/gpuhw10} \label{fig:hw10}} 
-\subfigure[Large Image, Filter Width = $5$]{ \includegraphics[width=0.48\textwidth]{images/gpuhw5} \label{fig:hw5} } 
-\subfigure[Smaller Image, Filter Width = $10$]{ \includegraphics[width=0.48\textwidth]{images/gpuhw10light} \label{fig:hw10light} } 
-\subfigure[Smaller Image, Filter Width = $5$]{ \includegraphics[width=0.48\textwidth]{images/gpuhw5light} \label{fig:hw5light} } 
+\subfigure[Large 3000X3000 Image, Filter Width = $10$]{ \includegraphics[width=0.48\textwidth]{images/gpuhw10} \label{fig:hw10}} 
+\subfigure[Large 3000X3000 Image, Filter Width = $5$]{ \includegraphics[width=0.48\textwidth]{images/gpuhw5} \label{fig:hw5} } 
+\subfigure[Smaller 768X512 Image, Filter Width = $10$]{ \includegraphics[width=0.48\textwidth]{images/gpuhw10light} \label{fig:hw10light} } 
+\subfigure[Smaller 768X512 Image, Filter Width = $5$]{ \includegraphics[width=0.48\textwidth]{images/gpuhw5light} \label{fig:hw5light} } 
 \end{centering}
 \caption{Performance of Naive and pair-symmetric (P.S.) bilateral filtering kernel algorithms on GTX 280 NVidia card for both smaller image and larger image.} 
 \label{fig:gpuresults} 
-\end{figure} 
+\end{figure*} 
 
-AMD Shanghai similarly shows an impressive speedup of 20.92x (Figure~\ref{fig:ShanghaiFinal}). The interesting case is with AMD Phenom as shown in Figure~\ref{fig:PhenomFinal}. The speedup drops a little as number of cores increases beyond three. The reason behind this is the turbo core technology; when there are a maximum of three cores being used, the clock frequency scales up to 3.6 $GH_z$ but as soon as more threads are created the clock frequency steps down to 2.7 $GH_z$. 
+Intel Core i7 chip (Figure~\ref{fig:corei7Final}) also demonstrates the similar behavior. The final speedup of 4.63x, using 4 cores, is a result of speedup due to SSE which is 1.33x and speedup due to OpenMP, using BL\_Naive algorithm, which is 3.48x. 
+
+Figure~\ref{fig:comparisonFinalAMD} shows a similar comparison over various AMD chips. Figure~\ref{fig:barcelonaFinal} shows the speedup for Barcelona chip. This chip has 16 cores with a combined maximum speedup being 38.03x. The speedup achieved using SSE optimizations was 2.48x and the speedup for BL\_Naive was 15.34x and thus these both realize a speedup of 38.03x using 16 cores.
+
+AMD Shanghai similarly shows an impressive speedup of 20.92x (Figure~\ref{fig:ShanghaiFinal}). The interesting case is with AMD Phenom as shown in Figure~\ref{fig:PhenomFinal}. The speedup drops a little as the number of cores increases beyond three. The reason behind this is the turbo core technology; when there are a maximum of three cores being used, the clock frequency scales up to 3.6 $GH_z$ but as soon as more threads are created the clock frequency steps down to 2.7 $GH_z$. 
 
 \subsection{Performance of bilateral filtering kernel on GPU}
+
 We used the NVIDIA GTX 280 for benchmarking the performance of our CUDA implementations. Our implementations' variable parameters were the image size, the filter window size, and the grid dimensions (\# blocks horizontal * \# of blocks vertical concurrently executed) and block dimensions (\# of threads horizontal * \# of threads vertical in each block). The tests used two images: a large image with 3000 x 3000 pixels and a small image with 768 x 512 pixels.
 
-On the GPU, our pair-symmetric algorithm outperformed our naive algorithm for every set of tests. For example, Figure~\ref{fig:hw10} shows the pair-symmetric algorithm's best timing to be roughly 75\% of the naive algorithm's best timing for processing a 3000 x 3000 image using a 21 x 21 pixel filter window. The test that gave the closest difference in timing as shown in Figure~\ref{fig:hw10light} was processing a 768 x 712 pixel image using a 11 x 11 window size. In this test, the pair-symmetric algorithm's best timing was at a virtual tie with the naive algorithm's best timing at 0.00390 seconds, but upon further testing we found the pair-symmetric algorithm's optimal timing to be 0.00388 seconds when changing the grid dimension to 16 x 16 concurrent blocks, thus slightly outperforming the naive algorithm. Figures \ref{fig:hw10} and \ref{fig:hw10light} show exponential rises in execution time for both algorithms as block vertical dimension decreased. Due to runtime complexity of the bilateral filter being the square of the filter width, Figures (b) and (d), which reflect our tests that used a 5 pixel filter width, do not exhibit the steep curvature that Figures (a) and (c) exhibit.
+On the GPU, our pair-symmetric algorithm outperformed our naive algorithm for every set of tests. For example, Figure~\ref{fig:hw10} shows the pair-symmetric algorithm's best timing to be roughly 75\% of the naive algorithm's best timing for processing a 3000 x 3000 image using a 21 x 21 pixel filter window. The test that gave the closest difference in timing as shown in Figure~\ref{fig:hw10light} was processing a 768 x 712 pixel image using a 11 x 11 window size. 
 
-While our tests returned a maximum 25\% reduction in execution time, our pair-symmetric algorithm has the potential to reach a near 50\% reduction in execution time. Furthermore, the benchmarks of our pair-symmetric algorithm reveal minor irregularities in the trajectory of performance derived from execution timings versus respective incremental adjustments of parameter values such as CUDA block and grid dimensions. The main cause of both of these observations is shared memory. To better understand the impact of the additional shared memory transactions that our pair-symmetric algorithm requires, whereas the naive algorithm does not require shared memory for output storage, we implemented a single-threaded CPU-based version of both the naive bilateral filter algorithm and pair-symmetric algorithm so that native-memory (RAM, L1, or L2 cache) could substitute for the GPU's shared memory. The results were remarkably illustrative of our pair-symmetric algorithm's potential. The naive algorithm running on the CPU with a filter width of 10 pixels processed a 3000 x 3000 image in an average of 1206.7 seconds, while our pair-symmetric algorithm took 611.8 seconds - a 49.23\% reduction in execution time. Moreover, when replacing shared memory transactions with dummy register transactions in our CUDA implementation of the pair-symmetric algorithm, we observed a consistent 40\% reduction in execution time. From these findings, we conclude that the inferior speed of GPU shared memory transactions to register transactions is what limited our pair-symmetric algorithm's performance gains to  a maximum of 33\%, i.e., achieving timings no less than 75\% of the naive algorithm's timings. To further verify this inference, we meticulously stepped through the Parallel Thread Execution (PTX) code - CUDA's quasi-assembly language - of our CUDA implementations to ensure that no unintended optimizations were being made by the compiler when substituting shared memory transactions with dummy register transactions. Not only were no optimizations being made but the PTX code showed that the shared memory transactions required additional load and store instructions, further evidencing the cost of using shared memory.
+In this test, the pair-symmetric algorithm's best timing was at a virtual tie with the naive algorithm's best timing at 0.00390 seconds, but upon further testing we found the pair-symmetric algorithm's optimal timing to be 0.00388 seconds when changing the grid dimension to 16 x 16 concurrent blocks, thus slightly outperforming the naive algorithm. Figures \ref{fig:hw10} and \ref{fig:hw10light} show exponential rises in execution time for both algorithms as block vertical dimension decreased. Due to runtime complexity of the bilateral filter being the square of the filter width, Figures~\ref{fig:hw5} and \ref{fig:hw5}, which reflect our tests that used a 5 pixel filter width, do not exhibit the steep curvature that Figures~\ref{fig:hw10} and \ref{fig:hw10light} exhibit.
+
+While our tests returned a maximum 25\% reduction in execution time, our pair-symmetric algorithm has the potential to reach a near 50\% reduction in execution time. Furthermore, the benchmarks of our pair-symmetric algorithm reveal minor irregularities in the trajectory of performance derived from execution timings versus respective incremental adjustments of parameter values such as CUDA block and grid dimensions. The main cause of both of these observations is shared memory. 
+
+To better understand the impact of the additional shared memory transactions that our pair-symmetric algorithm requires, whereas the naive algorithm does not require shared memory for output storage, we implemented a single-threaded CPU-based version of both the naive bilateral filter algorithm and pair-symmetric algorithm so that native-memory (RAM, L1, or L2 cache) could substitute for the GPU's shared memory. The results were remarkably illustrative of our pair-symmetric algorithm's potential. The naive algorithm running on the CPU with a filter width of 10 pixels processed a 3000 x 3000 image in an average of 1206.7 seconds, while our pair-symmetric algorithm took 611.8 seconds - a 49.23\% reduction in execution time. 
+
+Moreover, when replacing shared memory transactions with dummy register transactions in our CUDA implementation of the pair-symmetric algorithm, we observed a consistent 40\% reduction in execution time. From these findings, we conclude that the inferior speed of GPU shared memory transactions to register transactions is what limited our pair-symmetric algorithm's performance gains to  a maximum of 33\%, i.e., achieving timings no less than 75\% of the naive algorithm's timings. 
+
+To further verify this inference, we meticulously stepped through the Parallel Thread Execution (PTX) code - CUDA's quasi-assembly language - of our CUDA implementations to ensure that no unintended optimizations were being made by the compiler when substituting shared memory transactions with dummy register transactions. Not only were no optimizations being made but the PTX code showed that the shared memory transactions required additional load and store instructions, further evidencing the cost of using shared memory.
 
 Another challenge in interpreting our results was porting the concept of \lq{}\lq{}speed-up" to general purpose GPU programming. Since speed-up is necessarily with respect to a reference timing, we used the same reference timing that our CPU optimizations used - that is how we calculated the 235.5x speed-up figure stated in the abstract of this paper - and we also made another reference timing by running our GPU implementations using a single thread. For example, using a single thread operating with filter width of 10 pixels to process a 768 x 512 pixel image, the time taken for the GTX280 to complete this execution was an average of 177.9 seconds for both of our algorithms; using a filter width of 5 pixels, the average execution time was 50.5 seconds for both algorithms. With respect to these reference timings, the speed-up is roughly 20,500x for the 10 pixel filter width and 12,440x for the 5 pixel filter width.
 
