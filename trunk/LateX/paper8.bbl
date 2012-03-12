@@ -82,6 +82,10 @@ Q.~Yang, K.-H. Tan, and N.~Ahuja, ``Real-time o(1) bilateral filtering,'' in
   \emph{Computer Vision and Pattern Recognition, 2009. CVPR 2009. IEEE
   Conference on}, june 2009, pp. 557 --564.
 
+\bibitem{xu2009}
+W.~Xu and K.~Mueller, ``A performance-driven study of regularization methods
+  for gpu-accelerated iterative ct.''
+
 \bibitem{kdatta2008}
 \BIBentryALTinterwordspacing
 K.~Datta, M.~Murphy, V.~Volkov, S.~Williams, J.~Carter, L.~Oliker,

@@ -47,12 +47,14 @@ Our work explores efficient parallel implementation of bilateral filtering kerne
 
 A faster approximation to the original algorithm \cite{Paris2009} extends the image to 3D space by treating the pixel intensity as the third dimension and using a linear shift-invariant convolution in 3D. A separable implementation \cite{Pham2005} applies the filter kernel first to one of the image dimensions and the intermediate result is filtered again on other dimensions. This reduces the complexity from $O(N*(m^{d}))$ to $O(N*d)$, where $N$ is the total number of pixels in the image and $d$ is the dimensions of the image. Yang et al.\cite{yang2009} have reported a constant time algorithm by dividing the bilateral filtering kernel into a constant number of time spatial kernels. However, we do not parallelize these methods since our interest is to develop a parallelization method that can be applied, in general, to any spatially invariant and inseparable filtering algorithm. 
 
+A previous study, closest to ours, is done by Xu et al.\cite{xu2009}, where they study the GPU-amenable implementation of bilateral filtering kernel. Our algorithms report 2x faster processing time than the timings reported in \cite{xu2009} on the same GPU - GTX 280. 
+
 In this paper, we propose a set of optimizations and a non-naive algorithm for bilateral filtering kernel. Specifically, we introduce a pair-symmetric algorithm which has the theoretical potential to reduce processing time in half.
-Our specific contributions are
+Our specific contributions are:
 \begin{enumerate}
-\item
-\item
-\item
+\item Improving the performance of bilateral filtering kernel on multicore machines by exploiting the availability of special purpose registers. These improvements resulted in a speedup of up to 38x using 16 cores of AMD Barcelona each with 4-stage vector pipeline, up to 23x using 8 cores for Intel Harpertown, and up to 26x using 32 cores of Intel Nehalem multicore machines compared to a compiler-optimized code.
+\item Creating a novel pair-symmetric algorithm to reduce the number of calculations by a factor of two. 
+\item Efficiently porting the pair-symmetric algorithm on GPU by exploiting the intra-warp synchronization. 
 \end{enumerate}
 
 In order to assess the efficacy of our optimization techniques, our experimental testbed includes a comprehensive set of multicore and manycore architecture chips including the Nvidia GTX280, AMD quad-core 2376 (Shanghai), AMD quad-core 8350 (Barcelona), Intel quad-core Xeon E5410 (Harpertown), Intel eight-core Xeon X7560 (Nehalem-EX), Intel quad-core Core i7, and AMD Phenom II six-core architectures. \footnotetext[1]{Our code is available under GNU GPL license from \url{http://code.google.com/p/blfilter/}.}
@@ -176,6 +178,7 @@ After the data dependency conditions are met, the function that returns the outp
 \STATE{$X_2 \leftarrow 0$}
 \FOR{$k=1$ \TO $filter\_hw$}
 \FOR{$l = -filter\_hw$ \TO $filter\_hw$}
+\STATE{/* $C_1$ and $C_2$ are user defined constants */}
 \STATE{$temp \leftarrow e^{C_1(k^2 + l^2) + C_2(s[i,j] - s[i+k,j+l])^{2}}$}
 \STATE{$X_1 \leftarrow X_1 + temp \cdot s[i+k,j+l]$}
 \STATE{$X_2 \leftarrow X_2 + temp$}
@@ -293,7 +296,7 @@ AMD Phenom II X6 1045T  & 2.7 $GH_z$  & 3  & 1  & 6  & SSE, SSE2, SSE4a  & 6MB  
 NVidia GeForce GTX 280 & 1296 MHz & 240 & 1 & 240 & - & 1 GB GDDR3 & CUDA 2.0\\
 \hline
 \end{tabular}
-\caption{Architectural details of multicore chips employed for experiments}
+\caption{Architectural details of chips employed for experiments}
 \label{tab:archs} 
 \end{table*}
 
@@ -363,8 +366,7 @@ $BL\_Naive$ has a redundant calculation inside the innermost loop which has been
 After moving the redundant calculation out of the loop the same instruction becomes
  $$gaussian\_ph = exp( pd * pre\_calc\_sigma\_sq );$$ 
  
-\subsubsection{Input Image}
-In order to analyze the behavior of our kernel with varying image sizes, we have executed our kernel with two different images. One that fits into cache easily and the other that does not fit into cache but fits into main memory. Both of the images were converted to single spectrum images represented by single precision numbers for each pixel. The smaller image was 512 pixels wide and 512 pixels high, thus requiring 1MB memory to store it. As shown in Table~\ref{tab:archs} all of the multicore systems have cache memories bigger than 1 MB. The second image was 3000 pixels wide and 3000 pixels high and hence requires little more than 34 MB of memory to store it. None of the multicore cache memories were big enough to store this image entirely.
+\textbf{Input Image:~}In order to analyze the behavior of our kernel with varying image sizes, we have executed our kernel with two different images. One that fits into cache easily and the other that does not fit into cache but fits into main memory. Both of the images were converted to single spectrum images represented by single precision numbers for each pixel. The smaller image was 512 pixels wide and 512 pixels high, thus requiring 1MB memory to store it. As shown in Table~\ref{tab:archs} all of the multicore systems have cache memories bigger than 1 MB. The second image was 3000 pixels wide and 3000 pixels high and hence requires little more than 34 MB of memory to store it. 
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Performance Results}
 \label{sec:results}
@@ -399,7 +401,6 @@ For all of our experiments the filter radius was kept at 10, subsequently making
 \label{fig:comparisonFinalAMD} 
 \end{figure*} 
 
-
 Figure~\ref{fig:comparisonIntel} compares different algorithms on all three $Intel$ chips. In this experiment we are comparing the absolute speedup achieved by the respective algorithm compared to BL\_Naive algorithm. It is important to note that these results are for micro level parallelism (use of 128 bit special purpose registers) only; the results do not consider speedup due to high level (OpenMP) parallelization. The parallel versions shown here are compared against the parallel version of BL\_Naive algorithm. The speedup for all algorithms is still bounded by the theoretical peak speedup which happens to be four here, since we work with 32bit floating point numbers. Interestingly, although we use compiler optimization flags such as -O3 and -xSSE2, i.e. there is automated vectorization taking place in all the algorithms, our hand coded vectorization is superior in many cases.
 
 
@@ -432,7 +433,7 @@ Intel Nehalem chip with 32 cores shows an impressive speedup as shown in Figure~
 \subfigure[Smaller 768X512 Image, Filter Width = $10$]{ \includegraphics[width=0.48\textwidth]{images/gpuhw10light} \label{fig:hw10light} } 
 \subfigure[Smaller 768X512 Image, Filter Width = $5$]{ \includegraphics[width=0.48\textwidth]{images/gpuhw5light} \label{fig:hw5light} } 
 \end{centering}
-\caption{Performance of Naive and pair-symmetric (P.S.) bilateral filtering kernel algorithms on GTX 280 NVidia card for both smaller image and larger image.} 
+\caption{Performance of Naive and pair-symmetric (P.S.) bilateral filtering kernel algorithms on GTX 280 NVidia card. X and Y represent the number of threads inside a block; number of blocks is listed next to the name of the algorithm (64x64 and 32x32).} 
 \label{fig:gpuresults} 
 \end{figure*} 
 
@@ -441,7 +442,7 @@ Intel Core i7 chip (Figure~\ref{fig:corei7Final}) also demonstrates the similar 
 Figure~\ref{fig:comparisonFinalAMD} shows a similar comparison over various AMD chips. Figure~\ref{fig:barcelonaFinal} shows the speedup for Barcelona chip. This chip has 16 cores with a combined maximum speedup being 38.03x. The speedup achieved using SSE optimizations was 2.48x and the speedup for BL\_Naive was 15.34x and thus these both realize a speedup of 38.03x using 16 cores.
 
 AMD Shanghai similarly shows an impressive speedup of 20.92x (Figure~\ref{fig:ShanghaiFinal}). The interesting case is with AMD Phenom as shown in Figure~\ref{fig:PhenomFinal}. The speedup drops a little as the number of cores increases beyond three. The reason behind this is the turbo core technology; when there are a maximum of three cores being used, the clock frequency scales up to 3.6 $GH_z$ but as soon as more threads are created the clock frequency steps down to 2.7 $GH_z$. 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Performance of bilateral filtering kernel on GPU}
 
 We used the NVIDIA GTX 280 for benchmarking the performance of our CUDA implementations. Our implementations' variable parameters were the image size, the filter window size, and the grid dimensions (\# blocks horizontal * \# of blocks vertical concurrently executed) and block dimensions (\# of threads horizontal * \# of threads vertical in each block). The tests used two images: a large image with 3000 x 3000 pixels and a small image with 768 x 512 pixels.
@@ -452,7 +453,7 @@ In this test, the pair-symmetric algorithm's best timing was at a virtual tie wi
 
 While our tests returned a maximum 25\% reduction in execution time, our pair-symmetric algorithm has the potential to reach a near 50\% reduction in execution time. Furthermore, the benchmarks of our pair-symmetric algorithm reveal minor irregularities in the trajectory of performance derived from execution timings versus respective incremental adjustments of parameter values such as CUDA block and grid dimensions. The main cause of both of these observations is shared memory. 
 
-To better understand the impact of the additional shared memory transactions that our pair-symmetric algorithm requires, whereas the naive algorithm does not require shared memory for output storage, we implemented a single-threaded CPU-based version of both the naive bilateral filter algorithm and pair-symmetric algorithm so that native-memory (RAM, L1, or L2 cache) could substitute for the GPU's shared memory. The results were remarkably illustrative of our pair-symmetric algorithm's potential. The naive algorithm running on the CPU with a filter width of 10 pixels processed a 3000 x 3000 image in an average of 1206.7 seconds, while our pair-symmetric algorithm took 611.8 seconds - a 49.23\% reduction in execution time. 
+To better understand the impact of the additional shared memory transactions that our pair-symmetric algorithm requires, whereas the naive algorithm does not require shared memory for output storage, we implemented a CPU-based version of both the naive bilateral filter algorithm and pair-symmetric algorithm so that native-memory (RAM, L1, or L2 cache) could substitute for the GPU's shared memory. The results were remarkably illustrative of our pair-symmetric algorithm's potential. The naive algorithm running on Barcelona CPU with a filter width of 10 pixels processed a 3000 x 3000 image in an average of 131.98 seconds, while our pair-symmetric algorithm took 74.31 seconds - a 43.7\% reduction in execution time. 
 
 Moreover, when replacing shared memory transactions with dummy register transactions in our CUDA implementation of the pair-symmetric algorithm, we observed a consistent 40\% reduction in execution time. From these findings, we conclude that the inferior speed of GPU shared memory transactions to register transactions is what limited our pair-symmetric algorithm's performance gains to  a maximum of 33\%, i.e., reducing timings by no more than than 25\%.
 

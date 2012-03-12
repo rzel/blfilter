@@ -9,28 +9,30 @@
 \citation{Paris2009}
 \citation{Pham2005}
 \citation{yang2009}
+\citation{xu2009}
+\citation{xu2009}
 \@writefile{toc}{\contentsline {section}{\numberline {I}Introduction}{1}}
 \newlabel{sec:intro}{{I}{1}}
-\@writefile{toc}{\contentsline {section}{\numberline {II}Bilateral Filtering Kernel}{1}}
-\newlabel{sec:stencil}{{II}{1}}
 \citation{Tomasi1998}
-\citation{Paris2009,Pham2005}
+\@writefile{toc}{\contentsline {section}{\numberline {II}Bilateral Filtering Kernel}{2}}
+\newlabel{sec:stencil}{{II}{2}}
 \@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Example of a filter at the starting position of the image}}{2}}
 \newlabel{fig:filter}{{1}{2}}
 \newlabel{spatial}{{1}{2}}
 \newlabel{photometric}{{3}{2}}
 \newlabel{combined}{{5}{2}}
 \newlabel{eq:depen}{{7}{2}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\unhbox \voidb@x \hbox {II-A}}A Naive Approach to bilateral filtering kernel}{2}}
+\citation{Paris2009,Pham2005}
 \@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Example of a naive bilateral filter iterations}}{3}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\unhbox \voidb@x \hbox {II-A}}A Naive Approach to bilateral filtering kernel}{3}}
 \@writefile{loa}{\contentsline {algorithm}{\numberline {1}{\ignorespaces Naive bilateral Filter Algorithm}}{3}}
 \newlabel{alg:Example-Algorithm-float}{{1}{3}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\unhbox \voidb@x \hbox {II-B}}Pair-symmetric bilateral filtering kernel}{3}}
-\@writefile{loa}{\contentsline {algorithm}{\numberline {2}{\ignorespaces Pair-symmetric Bilateral Filtering Algorithm}}{3}}
-\newlabel{alg:Example-Algorithm-float-1}{{2}{3}}
 \@writefile{toc}{\contentsline {section}{\numberline {III}CUDA-based Implementation Details}{3}}
 \newlabel{sec:GPUoptimizations}{{III}{3}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\unhbox \voidb@x \hbox {III-A}}Implicit Intra-Warp Synchronization and Memory Access Patterns}{3}}
+\@writefile{loa}{\contentsline {algorithm}{\numberline {2}{\ignorespaces Pair-symmetric Bilateral Filtering Algorithm}}{4}}
+\newlabel{alg:Example-Algorithm-float-1}{{2}{4}}
 \newlabel{fig:pspro}{{\unhbox \voidb@x \hbox {III-A}}{4}}
 \newlabel{fig:pspro2}{{\unhbox \voidb@x \hbox {III-A}}{4}}
 \newlabel{fig:pspro3}{{\unhbox \voidb@x \hbox {III-A}}{4}}
@@ -39,7 +41,7 @@
 \@writefile{lof}{\contentsline {subfigure}{\numberline{(b)}{\ignorespaces {2 x 2 thread-blocks each with 4 x 3 threads}}}{4}}
 \@writefile{lof}{\contentsline {subfigure}{\numberline{(c)}{\ignorespaces {An illustrated overview of the bilateral filtering process}}}{4}}
 \newlabel{fig:intrawarp}{{3}{4}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\unhbox \voidb@x \hbox {III-B}}Shared Memory and Tile Processing}{4}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\unhbox \voidb@x \hbox {III-B}}Shared Memory and Tile Processing}{5}}
 \@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Tiling for Pair-Symmetric bilateral filtering with each tile having a unique color. Overlapping tiles have a resultant color.}}{5}}
 \newlabel{fig:Tiling-for-Pair-Symmetric}{{4}{5}}
 \@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Input image after one iteration of pair-symmetric algorithm. Tiles do not have perfect boundaries due to overlaps.}}{5}}
@@ -59,7 +61,7 @@
 \newlabel{sub:reduction}{{\unhbox \voidb@x \hbox {IV-C}}{6}}
 \@writefile{toc}{\contentsline {section}{\numberline {V}Experimental Testbed}{6}}
 \newlabel{sec:expt}{{V}{6}}
-\@writefile{lot}{\contentsline {table}{\numberline {I}{\ignorespaces Architectural details of multicore chips employed for experiments}}{7}}
+\@writefile{lot}{\contentsline {table}{\numberline {I}{\ignorespaces Architectural details of chips employed for experiments}}{7}}
 \newlabel{tab:archs}{{I}{7}}
 \newlabel{fig:Nehalem}{{7(a)}{7}}
 \newlabel{sub@fig:Nehalem}{{(a)}{7}}
@@ -72,7 +74,6 @@
 \@writefile{lof}{\contentsline {subfigure}{\numberline{(b)}{\ignorespaces {Harpertown Xeon E5410}}}{7}}
 \@writefile{lof}{\contentsline {subfigure}{\numberline{(c)}{\ignorespaces {Core i7 - 870}}}{7}}
 \newlabel{fig:comparisonIntel}{{7}{7}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {\unhbox \voidb@x \hbox {V-}1}Input Image}{7}}
 \@writefile{toc}{\contentsline {section}{\numberline {VI}Performance Results}{7}}
 \newlabel{sec:results}{{VI}{7}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\unhbox \voidb@x \hbox {VI-A}}Performance of bilateral filtering kernel on CPU}{7}}
@@ -119,7 +120,7 @@
 \newlabel{sub@fig:hw10light}{{(c)}{9}}
 \newlabel{fig:hw5light}{{12(d)}{9}}
 \newlabel{sub@fig:hw5light}{{(d)}{9}}
-\@writefile{lof}{\contentsline {figure}{\numberline {12}{\ignorespaces Performance of Naive and pair-symmetric (P.S.) bilateral filtering kernel algorithms on GTX 280 NVidia card for both smaller image and larger image.}}{9}}
+\@writefile{lof}{\contentsline {figure}{\numberline {12}{\ignorespaces Performance of Naive and pair-symmetric (P.S.) bilateral filtering kernel algorithms on GTX 280 NVidia card. X and Y represent the number of threads inside a block; number of blocks is listed next to the name of the algorithm (64x64 and 32x32).}}{9}}
 \@writefile{lof}{\contentsline {subfigure}{\numberline{(a)}{\ignorespaces {Large 3000X3000 Image, Filter Width = $10$}}}{9}}
 \@writefile{lof}{\contentsline {subfigure}{\numberline{(b)}{\ignorespaces {Large 3000X3000 Image, Filter Width = $5$}}}{9}}
 \@writefile{lof}{\contentsline {subfigure}{\numberline{(c)}{\ignorespaces {Smaller 768X512 Image, Filter Width = $10$}}}{9}}
@@ -138,10 +139,11 @@
 \bibcite{Paris2009}{8}
 \bibcite{Pham2005}{9}
 \bibcite{yang2009}{10}
-\bibcite{kdatta2008}{11}
-\bibcite{matrix-multi}{12}
-\bibcite{MatrixMultiFloating}{13}
-\bibcite{NCCmatching}{14}
+\bibcite{xu2009}{11}
+\bibcite{kdatta2008}{12}
+\bibcite{matrix-multi}{13}
+\bibcite{MatrixMultiFloating}{14}
+\bibcite{NCCmatching}{15}
 \@writefile{toc}{\contentsline {section}{\numberline {VII}Conclusion and future work}{10}}
 \newlabel{sec:conclusion}{{VII}{10}}
 \@writefile{toc}{\contentsline {section}{References}{10}}
